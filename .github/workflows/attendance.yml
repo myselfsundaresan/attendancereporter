@@ -2,9 +2,9 @@ name: Daily Attendance Check
 
 on:
   schedule:
-    # 4:00 UTC = 9:30 AM IST
-    - cron: '0 4 * * *'
-  workflow_dispatch: # Allows you to run it manually to test
+    # Runs at 3:30, 5:30, and 8:30 UTC (9am, 11am, 2pm IST)
+    - cron: '30 3,5,8 * * *'
+  workflow_dispatch: # Allows manual testing
 
 jobs:
   check-attendance:
