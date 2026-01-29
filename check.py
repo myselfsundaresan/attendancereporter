@@ -92,6 +92,9 @@ try:
     chat_id = os.environ['CHAT_ID']
     new_data_str = f"{current_total},{current_attended}"
     
+    # Calculate Percentage
+    percentage = round((current_attended / current_total) * 100, 2) if current_total > 0 else 0.0
+
     if current_total > last_total:
         diff_total = current_total - last_total
         diff_attended = current_attended - last_attended
@@ -108,7 +111,8 @@ try:
                f"Status: *{status}*\n"
                f"-----------------------------\n"
                f"🏫 Total Classes: {last_total} ➝ {current_total}\n"
-               f"✅ Your Count: {last_attended} ➝ {current_attended}")
+               f"✅ Your Count: {last_attended} ➝ {current_attended}\n"
+               f"📊 Percentage: *{percentage}%*")
 
         requests.get(f"https://api.telegram.org/bot{bot_token}/sendMessage?chat_id={chat_id}&text={msg}&parse_mode=Markdown")
         
