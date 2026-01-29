@@ -15,10 +15,6 @@ REPORT_URL = "https://arms.smc.saveetha.com/StudentPortal/AttendanceReport.aspx"
 
 # --- HELPER: SEND OR EDIT TELEGRAM MESSAGE ---
 def send_telegram(msg, message_id=None):
-    """
-    Sends a new message OR edits an existing one if message_id is provided.
-    Returns the message_id of the sent/edited message.
-    """
     try:
         bot_token = os.environ.get('BOT_TOKEN')
         chat_id = os.environ.get('CHAT_ID')
@@ -39,17 +35,15 @@ def send_telegram(msg, message_id=None):
             }
             response = requests.post(edit_url, json=edit_payload)
             
-            # If successful (200) or if message content is exactly same (400 - "message is not modified"), return ID
             if response.status_code == 200:
                 print("✅ Message edited successfully!")
                 return message_id
             elif response.status_code == 400 and "message is not modified" in response.text:
-                print("ℹ️ Content unchanged, skipping edit.")
                 return message_id
             
             print(f"⚠️ Edit failed ({response.status_code}), sending new message instead.")
 
-        # 2. Fallback: SEND NEW message (if no ID provided or edit failed)
+        # 2. Fallback: SEND NEW message
         send_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
         payload = {"chat_id": chat_id, "text": msg, "parse_mode": "Markdown"}
         
@@ -67,23 +61,21 @@ def send_telegram(msg, message_id=None):
         print(f"❌ CONNECTION ERROR: Could not reach Telegram. {e}")
         return None
 
-# 1. READ MEMORY (Format: "Total,Attended,MessageID,Date")
-last_total = 0
-last_attended = 0
-last_msg_id = None
-last_date = ""
+# 1. READ MEMORY (Format: "StartTotal,StartAttended,MessageID,Date")
+stored_total = 0
+stored_attended = 0
+stored_msg_id = None
+stored_date = ""
 
 try:
     if os.path.exists(FILE_NAME):
         with open(FILE_NAME, "r") as f:
             content = f.read().strip().split(',')
-            # Support both old format (2 items) and new format (4 items)
-            if len(content) >= 2:
-                last_total = int(content[0])
-                last_attended = int(content[1])
             if len(content) == 4:
-                last_msg_id = int(content[2]) if content[2] != 'None' else None
-                last_date = content[3]
+                stored_total = int(content[0])
+                stored_attended = int(content[1])
+                stored_msg_id = int(content[2]) if content[2] != 'None' else None
+                stored_date = content[3]
 except Exception:
     print("⚠️ Memory file empty or corrupt. Starting fresh.")
 
@@ -137,58 +129,53 @@ try:
     
     print(f"📊 Extracted -> Total: {current_total}, Attended: {current_attended}")
 
-    # 5. SMART LOGIC & MESSAGING
+    # 5. LOGIC: DETERMINE BASELINE FOR TODAY
     today_date = datetime.now().strftime("%d-%m-%Y")
     current_time = datetime.now().strftime("%I:%M %p")
     
-    # Determine Message ID to use
-    # If today matches the stored date, we EDIT the existing message.
-    # Otherwise (new day), we start fresh (msg_id = None).
-    msg_id_to_use = last_msg_id if (last_date == today_date) else None
+    # Logic:
+    # If today is a NEW DAY (different from stored_date), we reset the baseline to CURRENT values.
+    # This assumes the first run happens before classes start (e.g., 9 AM).
+    # If today is SAME DAY, we keep the OLD baseline to track progress.
     
-    # Calculate Stats
-    percentage = round((current_attended / current_total) * 100, 2) if current_total > 0 else 0.0
-    
-    # Determine Status Logic
-    # Note: We compare against 'last_total' to show daily progress, 
-    # but if it's a new day, 'last_total' might be yesterday's final count.
-    
-    diff_total = current_total - last_total
-    diff_attended = current_attended - last_attended
-    
-    status = "No classes yet today 💤"
-    
-    if diff_total > 0:
-        if diff_attended == diff_total:
-            status = f"Present ({diff_attended}/{diff_total} classes) ✅"
-        elif diff_attended == 0:
-            status = f"Absent ({diff_total} classes missed) ❌"
-        else:
-            status = f"Partial ({diff_attended}/{diff_total} hrs) ⚠️"
-    elif last_date == today_date and diff_total == 0:
-        # If running multiple times same day and no change
-        status = "No new updates since last check ⏳"
+    if stored_date != today_date:
+        print("📅 New Day Detected! Resetting baseline.")
+        baseline_total = current_total
+        baseline_attended = current_attended
+        msg_id_to_use = None # New day = New message
+    else:
+        print("📅 Same Day. Keeping previous baseline.")
+        baseline_total = stored_total
+        baseline_attended = stored_attended
+        msg_id_to_use = stored_msg_id # Edit existing message
 
+    # Calculate Today's Stats
+    today_classes_held = current_total - baseline_total
+    today_classes_present = current_attended - baseline_attended
+    
+    # Calculate Overall Percentage
+    percentage = round((current_attended / current_total) * 100, 2) if current_total > 0 else 0.0
+
+    # 6. BUILD MESSAGE
     msg = (f"📅 *Daily Attendance Tracker* ({today_date})\n"
            f"⏰ Last Checked: {current_time}\n"
            f"-----------------------------\n"
-           f"Status: *{status}*\n"
+           f"📝 *Today's Stats*\n"
+           f"✅ No. of classes present: {today_classes_present}\n"
+           f"🏫 No. of classes today: {today_classes_held}\n"
            f"-----------------------------\n"
+           f"📊 *Overall Stats*\n"
            f"🏫 Total Classes: {current_total}\n"
-           f"✅ Your Count: {current_attended}\n"
-           f"📊 Percentage: *{percentage}%*")
+           f"✅ Total Attended: {current_attended}\n"
+           f"📈 Percentage: *{percentage}%*")
 
-    # Send or Edit Telegram Message
+    # 7. SEND/EDIT MESSAGE
     sent_msg_id = send_telegram(msg, msg_id_to_use)
     
-    # Update Memory File
-    # Format: Total, Attended, MessageID, Date
-    # We save current stats so next run today compares against these
-    # actually, for correct "daily progress", we might want to keep 'last_total' as start-of-day? 
-    # But for simplicity, we just save current state.
-    
-    final_msg_id = sent_msg_id if sent_msg_id else last_msg_id
-    new_data_str = f"{current_total},{current_attended},{final_msg_id},{today_date}"
+    # 8. SAVE MEMORY
+    # We must save the BASELINE, not current (unless it's a new day, where baseline=current)
+    final_msg_id = sent_msg_id if sent_msg_id else msg_id_to_use
+    new_data_str = f"{baseline_total},{baseline_attended},{final_msg_id},{today_date}"
     
     with open(FILE_NAME, "w") as f:
         f.write(new_data_str)
