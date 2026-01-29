@@ -1,7 +1,7 @@
 import os
 import time
 import requests
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -130,8 +130,12 @@ try:
     print(f"📊 Extracted -> Total: {current_total}, Attended: {current_attended}")
 
     # 5. LOGIC: DETERMINE BASELINE FOR TODAY
-    today_date = datetime.now().strftime("%d-%m-%Y")
-    current_time = datetime.now().strftime("%I:%M %p")
+    # FIX: Convert UTC server time to IST (Indian Standard Time)
+    ist_timezone = timezone(timedelta(hours=5, minutes=30))
+    now_ist = datetime.now(ist_timezone)
+    
+    today_date = now_ist.strftime("%d-%m-%Y")
+    current_time = now_ist.strftime("%I:%M %p")
     
     # Logic:
     # If today is a NEW DAY (different from stored_date), we reset the baseline to CURRENT values.
