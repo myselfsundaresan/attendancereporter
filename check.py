@@ -1,6 +1,7 @@
 import os
 import time
 import requests
+from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -103,6 +104,9 @@ try:
     # 5. SMART COMPARISON LOGIC
     new_data_str = f"{current_total},{current_attended}"
     percentage = round((current_attended / current_total) * 100, 2) if current_total > 0 else 0.0
+    
+    # Get current date
+    today_date = datetime.now().strftime("%d-%m-%Y")
 
     if current_total > last_total:
         # LOGIC A: Data Changed (Attendance Marked)
@@ -116,7 +120,7 @@ try:
         else:
             status = f"Partial ({diff_attended}/{diff_total} hrs) ⚠️"
 
-        msg = (f"📅 *Daily Attendance Update*\n"
+        msg = (f"📅 *Daily Attendance Update* ({today_date})\n"
                f"-----------------------------\n"
                f"Status: *{status}*\n"
                f"-----------------------------\n"
@@ -139,7 +143,7 @@ try:
         # LOGIC C: No Change
         # IMPORTANT: We now send a message here too so you know it's working!
         print("💤 No new attendance marked today.")
-        msg = (f"💤 *No New Attendance*\n"
+        msg = (f"💤 *No New Attendance* ({today_date})\n"
                f"-----------------------------\n"
                f"Attendance hasn't been updated today.\n"
                f"🏫 Current Total: {current_total}\n"
