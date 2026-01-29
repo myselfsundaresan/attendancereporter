@@ -13,43 +13,79 @@ FILE_NAME = "last_attendance.txt"
 LOGIN_URL = "https://arms.smc.saveetha.com/Login.aspx"
 REPORT_URL = "https://arms.smc.saveetha.com/StudentPortal/AttendanceReport.aspx"
 
-# --- HELPER: SEND TELEGRAM MESSAGE ---
-def send_telegram(msg):
-    """Sends a message to Telegram and logs the result for debugging."""
+# --- HELPER: SEND OR EDIT TELEGRAM MESSAGE ---
+def send_telegram(msg, message_id=None):
+    """
+    Sends a new message OR edits an existing one if message_id is provided.
+    Returns the message_id of the sent/edited message.
+    """
     try:
         bot_token = os.environ.get('BOT_TOKEN')
         chat_id = os.environ.get('CHAT_ID')
 
         if not bot_token or not chat_id:
             print("❌ DEBUG ERROR: BOT_TOKEN or CHAT_ID is missing from Secrets!")
-            return
+            return None
 
-        url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+        # 1. Try to EDIT existing message if ID is provided
+        if message_id:
+            print(f"✏️ Attempting to edit Message ID: {message_id}...")
+            edit_url = f"https://api.telegram.org/bot{bot_token}/editMessageText"
+            edit_payload = {
+                "chat_id": chat_id, 
+                "message_id": message_id, 
+                "text": msg, 
+                "parse_mode": "Markdown"
+            }
+            response = requests.post(edit_url, json=edit_payload)
+            
+            # If successful (200) or if message content is exactly same (400 - "message is not modified"), return ID
+            if response.status_code == 200:
+                print("✅ Message edited successfully!")
+                return message_id
+            elif response.status_code == 400 and "message is not modified" in response.text:
+                print("ℹ️ Content unchanged, skipping edit.")
+                return message_id
+            
+            print(f"⚠️ Edit failed ({response.status_code}), sending new message instead.")
+
+        # 2. Fallback: SEND NEW message (if no ID provided or edit failed)
+        send_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
         payload = {"chat_id": chat_id, "text": msg, "parse_mode": "Markdown"}
         
-        print(f"📨 Attempting to send message to Chat ID: {chat_id}...")
-        response = requests.post(url, json=payload)
+        print(f"📨 Sending new message to Chat ID: {chat_id}...")
+        response = requests.post(send_url, json=payload)
         
         if response.status_code == 200:
-            print("✅ Telegram message sent successfully!")
+            print("✅ New Telegram message sent!")
+            return response.json().get('result', {}).get('message_id')
         else:
             print(f"❌ TELEGRAM API ERROR: {response.status_code} - {response.text}")
+            return None
+            
     except Exception as e:
         print(f"❌ CONNECTION ERROR: Could not reach Telegram. {e}")
+        return None
 
-# 1. READ MEMORY
+# 1. READ MEMORY (Format: "Total,Attended,MessageID,Date")
 last_total = 0
 last_attended = 0
+last_msg_id = None
+last_date = ""
 
 try:
     if os.path.exists(FILE_NAME):
         with open(FILE_NAME, "r") as f:
             content = f.read().strip().split(',')
-            if len(content) == 2:
+            # Support both old format (2 items) and new format (4 items)
+            if len(content) >= 2:
                 last_total = int(content[0])
                 last_attended = int(content[1])
+            if len(content) == 4:
+                last_msg_id = int(content[2]) if content[2] != 'None' else None
+                last_date = content[3]
 except Exception:
-    print("⚠️ Memory file empty or corrupt. Starting fresh from 0,0.")
+    print("⚠️ Memory file empty or corrupt. Starting fresh.")
 
 # 2. SETUP HEADLESS BROWSER
 options = Options()
@@ -101,59 +137,65 @@ try:
     
     print(f"📊 Extracted -> Total: {current_total}, Attended: {current_attended}")
 
-    # 5. SMART COMPARISON LOGIC
-    new_data_str = f"{current_total},{current_attended}"
+    # 5. SMART LOGIC & MESSAGING
+    today_date = datetime.now().strftime("%d-%m-%Y")
+    current_time = datetime.now().strftime("%I:%M %p")
+    
+    # Determine Message ID to use
+    # If today matches the stored date, we EDIT the existing message.
+    # Otherwise (new day), we start fresh (msg_id = None).
+    msg_id_to_use = last_msg_id if (last_date == today_date) else None
+    
+    # Calculate Stats
     percentage = round((current_attended / current_total) * 100, 2) if current_total > 0 else 0.0
     
-    # Get current date
-    today_date = datetime.now().strftime("%d-%m-%Y")
-
-    if current_total > last_total:
-        # LOGIC A: Data Changed (Attendance Marked)
-        diff_total = current_total - last_total
-        diff_attended = current_attended - last_attended
-        
+    # Determine Status Logic
+    # Note: We compare against 'last_total' to show daily progress, 
+    # but if it's a new day, 'last_total' might be yesterday's final count.
+    
+    diff_total = current_total - last_total
+    diff_attended = current_attended - last_attended
+    
+    status = "No classes yet today 💤"
+    
+    if diff_total > 0:
         if diff_attended == diff_total:
-            status = "Present ✅"
+            status = f"Present ({diff_attended}/{diff_total} classes) ✅"
         elif diff_attended == 0:
-            status = "Absent ❌"
+            status = f"Absent ({diff_total} classes missed) ❌"
         else:
             status = f"Partial ({diff_attended}/{diff_total} hrs) ⚠️"
+    elif last_date == today_date and diff_total == 0:
+        # If running multiple times same day and no change
+        status = "No new updates since last check ⏳"
 
-        msg = (f"📅 *Daily Attendance Update* ({today_date})\n"
-               f"-----------------------------\n"
-               f"Status: *{status}*\n"
-               f"-----------------------------\n"
-               f"🏫 Total Classes: {last_total} ➝ {current_total}\n"
-               f"✅ Your Count: {last_attended} ➝ {current_attended}\n"
-               f"📊 Percentage: *{percentage}%*")
+    msg = (f"📅 *Daily Attendance Tracker* ({today_date})\n"
+           f"⏰ Last Checked: {current_time}\n"
+           f"-----------------------------\n"
+           f"Status: *{status}*\n"
+           f"-----------------------------\n"
+           f"🏫 Total Classes: {current_total}\n"
+           f"✅ Your Count: {current_attended}\n"
+           f"📊 Percentage: *{percentage}%*")
 
-        send_telegram(msg)
-        
-        with open(FILE_NAME, "w") as f:
-            f.write(new_data_str)
-
-    elif current_total != last_total:
-        # LOGIC B: Data correction
-        print("⚠️ Data correction detected.")
-        with open(FILE_NAME, "w") as f:
-            f.write(new_data_str)
-
-    else:
-        # LOGIC C: No Change
-        # IMPORTANT: We now send a message here too so you know it's working!
-        print("💤 No new attendance marked today.")
-        msg = (f"💤 *No New Attendance* ({today_date})\n"
-               f"-----------------------------\n"
-               f"Attendance hasn't been updated today.\n"
-               f"🏫 Current Total: {current_total}\n"
-               f"✅ Your Count: {current_attended}\n"
-               f"📊 Percentage: *{percentage}%*")
-        send_telegram(msg)
+    # Send or Edit Telegram Message
+    sent_msg_id = send_telegram(msg, msg_id_to_use)
+    
+    # Update Memory File
+    # Format: Total, Attended, MessageID, Date
+    # We save current stats so next run today compares against these
+    # actually, for correct "daily progress", we might want to keep 'last_total' as start-of-day? 
+    # But for simplicity, we just save current state.
+    
+    final_msg_id = sent_msg_id if sent_msg_id else last_msg_id
+    new_data_str = f"{current_total},{current_attended},{final_msg_id},{today_date}"
+    
+    with open(FILE_NAME, "w") as f:
+        f.write(new_data_str)
+        print("💾 Memory updated.")
 
 except Exception as e:
     print(f"❌ Error: {e}")
-    # Try to send the specific error to Telegram to help debug
     error_message = f"⚠️ *Bot Crashed*\nError: `{str(e)}`"
     send_telegram(error_message)
 
