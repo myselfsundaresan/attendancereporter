@@ -1,12 +1,4 @@
-<!-- ANIMATED HEADER -->
-
-<div align="center">
-<img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=600&size=28&duration=3000&pause=1000&color=249c32&center=true&vCenter=true&width=700&lines=Saveetha+Attendance+Bot;Smart+Daily+Attendance+Tracking;Student-Friendly+Automation;Zero-Touch+Monitoring" alt="Typing SVG" />
-</div>
-
-<!-- BADGES -->
-
-<div align="center">
+# Saveetha Attendance Bot
 
 ![Python](https://img.shields.io/badge/Python-3.9-blue?logo=python)
 ![Selenium](https://img.shields.io/badge/Selenium-Automation-brightgreen?logo=selenium)
@@ -14,135 +6,128 @@
 ![Telegram](https://img.shields.io/badge/Telegram-Bot_API-blue?logo=telegram)
 ![Status](https://img.shields.io/badge/Status-Active-success)
 
-</div>
-
 ---
 
 ## 🎓 About the Project
 
-**Saveetha Attendance Bot** is a student-focused automation project that **monitors college attendance daily without manual effort**.
+**Saveetha Attendance Bot** is a student-friendly automation project that helps you **monitor your college attendance daily without manual checking**.
 
 Once configured, the bot:
-- Logs into the college attendance portal automatically  
-- Compares attendance data day-by-day using logic  
-- Detects **Present / Absent / No Class** accurately  
-- Sends clear notifications via **Telegram**  
+- Automatically logs into the college portal  
+- Checks attendance every day  
+- Applies logical comparison (not just raw numbers)  
+- Notifies you via **Telegram** only when needed  
 
-This project demonstrates **real-world automation**, not just basic scripting.
+This project is designed to demonstrate **practical automation skills** suitable for college projects and internships.
 
 ---
 
-## 🧠 Attendance Decision Logic (Simple & Reliable)
+## 🧠 Attendance Logic
 
-The bot compares **yesterday vs today** using:
+The bot compares **yesterday vs today** attendance using:
 
 - **Total Classes**
 - **Classes Attended**
 
-### 📊 Logic Table
-
-| Change Observed | Interpretation | Result |
-|----------------|---------------|--------|
+| Observation | Meaning | Result |
+|------------|---------|--------|
 | Total Classes ↑ & Attended ↑ | You attended the class | Present ✅ |
 | Total Classes ↑ & Attended unchanged | Class held, you were absent | Absent ❌ |
-| Total Classes unchanged | No class / Holiday | No alert |
-
-This avoids false notifications and unnecessary panic.
+| Total Classes unchanged | No class / Holiday | No notification |
 
 ---
 
-## 🚀 Quick Setup (Beginner-Friendly)
+## 🚀 Setup Guide (Beginner Friendly)
 
-### 1️⃣ Fork the Repository
-Click **Fork** (top-right) to create your own copy.
+### 1. Fork the Repository
+Click **Fork** (top-right of this page) to create your own copy.
 
-### 2️⃣ Add Secrets (No Coding Needed)
-Go to:
+### 2. Add GitHub Secrets
 
-**Settings → Secrets and variables → Actions**
+GitHub stores sensitive information securely using **Secrets**.
 
-Add:
+#### Navigation
+1. Open your repository  
+2. Click **Settings**  
+3. Go to **Secrets and variables → Actions**  
+4. Click **New repository secret**
 
-| Secret | Description |
-|------|-------------|
-| `USER_ID` | College portal login ID |
-| `PASSWORD` | College portal password |
-| `BOT_TOKEN` | Telegram bot token (@BotFather) |
-| `CHAT_ID` | Your Telegram chat ID (@userinfobot) |
+#### Required Secrets
 
-🔐 All values are securely stored by GitHub.
+| Name | Value |
+|-----|-------|
+| `USER_ID` | Your college roll number / login ID |
+| `PASSWORD` | Your college portal password |
+| `BOT_TOKEN` | Telegram bot token from @BotFather |
+| `CHAT_ID` | Telegram chat ID from @userinfobot |
 
-### 3️⃣ Initialize Attendance Memory
-Create **`last_attendance.txt`** in the root folder and add:
+After adding all four, they should appear in the secrets list.
+
+---
+
+## 🧠 Initialize Attendance Memory
+
+Create a file named **`last_attendance.txt`** in the repository root and add:
 
 ```
 0,0
 ```
 
-### 4️⃣ Enable Automation
-Open **Actions** → Enable workflows.
+This file stores the previous day’s attendance values.
 
-⏰ Runs automatically **every day at 9:30 AM IST**.
+---
+
+## ⏰ Enable Automation
+
+- Open the **Actions** tab  
+- Enable workflows  
+
+The bot runs automatically **every day at 9:30 AM IST**.
 
 ---
 
 ## ❓ Beginner FAQ
 
-**Q1. Do I need programming knowledge to use this?**  
-No. Setup requires only copying values and clicking buttons.
+**Do I need programming knowledge?**  
+No. Setup is simple and beginner-friendly.
 
-**Q2. Will this change my attendance?**  
-No. It only *checks* attendance and notifies you.
+**Will this modify my attendance?**  
+No. It only checks and reports attendance.
 
-**Q3. Is my password safe?**  
-Yes. Credentials are stored securely using GitHub Secrets.
+**Is my password safe?**  
+Yes. Stored securely using GitHub Secrets.
 
-**Q4. What if there is a holiday?**  
-The bot detects no change in total classes and stays silent.
-
-**Q5. Can this get me into trouble?**  
-Use responsibly. This project is meant for **personal tracking only**.
+**What happens on holidays?**  
+No change in total classes → no notification.
 
 ---
 
 ## 🎯 Why This Is Useful for Attendance Shortage
 
-- Early warning when you miss classes  
-- Helps you **plan attendance recovery** before exams  
-- Prevents last-minute shocks during internal assessments  
-- Encourages consistent attendance habits  
-- Ideal for students with **75% attendance requirements**  
-
-Think of it as your **daily attendance safety net**.
+- Daily awareness of attendance status  
+- Early warning before dropping below limits  
+- Helps plan attendance recovery  
+- Avoids last-minute exam eligibility issues  
+- Especially useful for **75% attendance rules**  
 
 ---
 
-## 🛠️ Tech Stack (Resume-Ready)
+## 🛠️ Tech Stack & Resume Value
 
-- **Python 3.9** – Core automation logic  
-- **Selenium (Headless Chrome)** – Web automation  
-- **GitHub Actions** – CI/CD & cron scheduling  
-- **Telegram Bot API** – Real-time notifications  
+- **Python 3.9**
+- **Selenium (Headless Chrome)**
+- **GitHub Actions (Cron-based automation)**
+- **Telegram Bot API**
 
-### 📌 Skills Demonstrated
+### Skills Demonstrated
 - Automation scripting  
 - Secure credential handling  
-- Cron-based scheduling  
+- Scheduled workflows  
 - API integration  
-- Practical problem solving  
+- Real-world problem solving  
 
-Perfect for **college projects, internships, and resumes**.
-
----
-
-## 🔐 Privacy & Ethics
-
-- No data is shared publicly  
-- No logs contain sensitive information  
-- Intended strictly for **educational and personal use**  
+Ideal for **college projects, resumes, and internship portfolios**.
 
 ---
 
-<div align="center">
-<sub>Built by a student, for students. Learn automation responsibly.</sub>
-</div>
+<sub>Built for educational purposes. Use responsibly.</sub>
