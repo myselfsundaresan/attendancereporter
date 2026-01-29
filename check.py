@@ -13,52 +13,55 @@ FILE_NAME = "last_attendance.txt"
 LOGIN_URL = "https://arms.smc.saveetha.com/Login.aspx"
 REPORT_URL = "https://arms.smc.saveetha.com/StudentPortal/AttendanceReport.aspx"
 
-# --- HELPER: SEND OR EDIT TELEGRAM MESSAGE ---
-def send_telegram(msg, message_id=None):
+# --- HELPER: TELEGRAM FUNCTIONS ---
+def get_secrets():
+    token = os.environ.get('BOT_TOKEN')
+    chat_id = os.environ.get('CHAT_ID')
+    if not token or not chat_id:
+        print("❌ DEBUG ERROR: BOT_TOKEN or CHAT_ID is missing!")
+        return None, None
+    return token, chat_id
+
+def delete_message(message_id):
+    """Deletes a specific message to keep chat clean."""
+    if not message_id: return
+    
+    token, chat_id = get_secrets()
+    if not token: return
+
     try:
-        bot_token = os.environ.get('BOT_TOKEN')
-        chat_id = os.environ.get('CHAT_ID')
-
-        if not bot_token or not chat_id:
-            print("❌ DEBUG ERROR: BOT_TOKEN or CHAT_ID is missing from Secrets!")
-            return None
-
-        # 1. Try to EDIT existing message if ID is provided
-        if message_id:
-            print(f"✏️ Attempting to edit Message ID: {message_id}...")
-            edit_url = f"https://api.telegram.org/bot{bot_token}/editMessageText"
-            edit_payload = {
-                "chat_id": chat_id, 
-                "message_id": message_id, 
-                "text": msg, 
-                "parse_mode": "Markdown"
-            }
-            response = requests.post(edit_url, json=edit_payload)
-            
-            if response.status_code == 200:
-                print("✅ Message edited successfully!")
-                return message_id
-            elif response.status_code == 400 and "message is not modified" in response.text:
-                return message_id
-            
-            print(f"⚠️ Edit failed ({response.status_code}), sending new message instead.")
-
-        # 2. Fallback: SEND NEW message
-        send_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-        payload = {"chat_id": chat_id, "text": msg, "parse_mode": "Markdown"}
-        
-        print(f"📨 Sending new message to Chat ID: {chat_id}...")
-        response = requests.post(send_url, json=payload)
+        url = f"https://api.telegram.org/bot{token}/deleteMessage"
+        payload = {"chat_id": chat_id, "message_id": message_id}
+        response = requests.post(url, json=payload)
         
         if response.status_code == 200:
-            print("✅ New Telegram message sent!")
-            return response.json().get('result', {}).get('message_id')
+            print(f"🗑️ Deleted old message ID: {message_id}")
         else:
-            print(f"❌ TELEGRAM API ERROR: {response.status_code} - {response.text}")
-            return None
-            
+            print(f"⚠️ Could not delete message {message_id} (It might not exist anymore). API: {response.text}")
     except Exception as e:
-        print(f"❌ CONNECTION ERROR: Could not reach Telegram. {e}")
+        print(f"❌ Delete Error: {e}")
+
+def send_message(msg):
+    """Sends a fresh message (triggers notification sound)."""
+    token, chat_id = get_secrets()
+    if not token: return None
+
+    try:
+        url = f"https://api.telegram.org/bot{token}/sendMessage"
+        payload = {"chat_id": chat_id, "text": msg, "parse_mode": "Markdown"}
+        
+        print(f"📨 Sending new message...")
+        response = requests.post(url, json=payload)
+        
+        if response.status_code == 200:
+            new_id = response.json().get('result', {}).get('message_id')
+            print(f"✅ Sent! New ID: {new_id}")
+            return new_id
+        else:
+            print(f"❌ Send Failed: {response.status_code} - {response.text}")
+            return None
+    except Exception as e:
+        print(f"❌ Send Error: {e}")
         return None
 
 # 1. READ MEMORY (Format: "StartTotal,StartAttended,MessageID,Date")
@@ -130,34 +133,32 @@ try:
     print(f"📊 Extracted -> Total: {current_total}, Attended: {current_attended}")
 
     # 5. LOGIC: DETERMINE BASELINE FOR TODAY
-    # FIX: Convert UTC server time to IST (Indian Standard Time)
     ist_timezone = timezone(timedelta(hours=5, minutes=30))
     now_ist = datetime.now(ist_timezone)
     
     today_date = now_ist.strftime("%d-%m-%Y")
     current_time = now_ist.strftime("%I:%M %p")
     
-    # Logic:
-    # If today is a NEW DAY (different from stored_date), we reset the baseline to CURRENT values.
-    # This assumes the first run happens before classes start (e.g., 9 AM).
-    # If today is SAME DAY, we keep the OLD baseline to track progress.
-    
+    # Check if it's a new day or same day
     if stored_date != today_date:
         print("📅 New Day Detected! Resetting baseline.")
         baseline_total = current_total
         baseline_attended = current_attended
-        msg_id_to_use = None # New day = New message
+        # No message to delete if it's a brand new day (optional, or we could delete yesterday's last msg)
+        # Let's keep yesterday's history? Or delete it? 
+        # User said "update", usually implies keeping daily history is fine, 
+        # but for "no spam", we only delete TODAY's previous message.
+        msg_id_to_delete = None 
     else:
         print("📅 Same Day. Keeping previous baseline.")
         baseline_total = stored_total
         baseline_attended = stored_attended
-        msg_id_to_use = stored_msg_id # Edit existing message
+        msg_id_to_delete = stored_msg_id # Delete the message from earlier today
 
     # Calculate Today's Stats
     today_classes_held = current_total - baseline_total
     today_classes_present = current_attended - baseline_attended
     
-    # Calculate Overall Percentage
     percentage = round((current_attended / current_total) * 100, 2) if current_total > 0 else 0.0
 
     # 6. BUILD MESSAGE
@@ -173,12 +174,15 @@ try:
            f"✅ Total Attended: {current_attended}\n"
            f"📈 Percentage: *{percentage}%*")
 
-    # 7. SEND/EDIT MESSAGE
-    sent_msg_id = send_telegram(msg, msg_id_to_use)
+    # 7. DELETE OLD -> SEND NEW
+    if msg_id_to_delete:
+        delete_message(msg_id_to_delete)
+        
+    sent_msg_id = send_message(msg)
     
     # 8. SAVE MEMORY
-    # We must save the BASELINE, not current (unless it's a new day, where baseline=current)
-    final_msg_id = sent_msg_id if sent_msg_id else msg_id_to_use
+    # Save the NEW message ID so we can delete it next time
+    final_msg_id = sent_msg_id if sent_msg_id else "None"
     new_data_str = f"{baseline_total},{baseline_attended},{final_msg_id},{today_date}"
     
     with open(FILE_NAME, "w") as f:
@@ -188,7 +192,7 @@ try:
 except Exception as e:
     print(f"❌ Error: {e}")
     error_message = f"⚠️ *Bot Crashed*\nError: `{str(e)}`"
-    send_telegram(error_message)
+    send_message(error_message)
 
 finally:
     driver.quit()
