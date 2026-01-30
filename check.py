@@ -144,10 +144,6 @@ try:
         print("📅 New Day Detected! Resetting baseline.")
         baseline_total = current_total
         baseline_attended = current_attended
-        # No message to delete if it's a brand new day (optional, or we could delete yesterday's last msg)
-        # Let's keep yesterday's history? Or delete it? 
-        # User said "update", usually implies keeping daily history is fine, 
-        # but for "no spam", we only delete TODAY's previous message.
         msg_id_to_delete = None 
     else:
         print("📅 Same Day. Keeping previous baseline.")
@@ -181,7 +177,7 @@ try:
     sent_msg_id = send_message(msg)
     
     # 8. SAVE MEMORY
-    # Save the NEW message ID so we can delete it next time
+    # Save the BASELINE (Start of Day), not current, so the math works next time
     final_msg_id = sent_msg_id if sent_msg_id else "None"
     new_data_str = f"{baseline_total},{baseline_attended},{final_msg_id},{today_date}"
     
