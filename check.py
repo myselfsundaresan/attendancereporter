@@ -142,8 +142,16 @@ try:
     # Check if it's a new day or same day
     if stored_date != today_date:
         print("📅 New Day Detected! Resetting baseline.")
-        baseline_total = current_total
-        baseline_attended = current_attended
+        # LOGIC FIX: Use Yesterday's Final Count (stored_total) as Today's Baseline.
+        # This ensures we capture classes that happened before this first run.
+        # Only reset to current_total if it's the very first run (0) or if data was reset (new semester).
+        if stored_total > 0 and current_total >= stored_total:
+            baseline_total = stored_total
+            baseline_attended = stored_attended
+        else:
+            baseline_total = current_total
+            baseline_attended = current_attended
+            
         msg_id_to_delete = None 
     else:
         print("📅 Same Day. Keeping previous baseline.")
