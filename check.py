@@ -139,13 +139,20 @@ try:
     today_date = now_ist.strftime("%d-%m-%Y")
     current_time = now_ist.strftime("%I:%M %p")
     
-    # --- LOGIC UPDATE: STRICT RESET ---
+    # --- LOGIC UPDATE: Use Yesterday's Count as Baseline ---
     if stored_date != today_date:
-        print("📅 New Day Detected! Resetting baseline to CURRENT values.")
-        # We strictly set baseline to CURRENT. This ensures stats start at 0 for the new day.
-        # We ignore 'stored_total' completely to prevent carryover.
-        baseline_total = current_total
-        baseline_attended = current_attended
+        print("📅 New Day Detected!")
+        # If we have valid stored data from yesterday, use it as the starting point (baseline).
+        # This captures classes that happened today BEFORE this script ran.
+        if stored_total > 0 and current_total >= stored_total:
+             baseline_total = stored_total
+             baseline_attended = stored_attended
+        else:
+             # Fallback: First run ever OR Semester reset (Current < Stored)
+             print("⚠️ First run or data reset detected. Starting fresh from current.")
+             baseline_total = current_total
+             baseline_attended = current_attended
+             
         msg_id_to_delete = None 
     else:
         print("📅 Same Day. Keeping previous baseline.")
