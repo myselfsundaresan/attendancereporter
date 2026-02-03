@@ -139,25 +139,20 @@ try:
     today_date = now_ist.strftime("%d-%m-%Y")
     current_time = now_ist.strftime("%I:%M %p")
     
-    # Check if it's a new day or same day
+    # --- LOGIC UPDATE: STRICT RESET ---
     if stored_date != today_date:
-        print("📅 New Day Detected! Resetting baseline.")
-        # LOGIC FIX: Use Yesterday's Final Count (stored_total) as Today's Baseline.
-        # This ensures we capture classes that happened before this first run.
-        # Only reset to current_total if it's the very first run (0) or if data was reset (new semester).
-        if stored_total > 0 and current_total >= stored_total:
-            baseline_total = stored_total
-            baseline_attended = stored_attended
-        else:
-            baseline_total = current_total
-            baseline_attended = current_attended
-            
+        print("📅 New Day Detected! Resetting baseline to CURRENT values.")
+        # We strictly set baseline to CURRENT. This ensures stats start at 0 for the new day.
+        # We ignore 'stored_total' completely to prevent carryover.
+        baseline_total = current_total
+        baseline_attended = current_attended
         msg_id_to_delete = None 
     else:
         print("📅 Same Day. Keeping previous baseline.")
+        # Keep the morning's baseline so we can calculate the cumulative difference for today
         baseline_total = stored_total
         baseline_attended = stored_attended
-        msg_id_to_delete = stored_msg_id # Delete the message from earlier today
+        msg_id_to_delete = stored_msg_id 
 
     # Calculate Today's Stats
     today_classes_held = current_total - baseline_total
@@ -185,7 +180,7 @@ try:
     sent_msg_id = send_message(msg)
     
     # 8. SAVE MEMORY
-    # Save the BASELINE (Start of Day), not current, so the math works next time
+    # Save the BASELINE (Start of Day), not current, so the math works for the next run today
     final_msg_id = sent_msg_id if sent_msg_id else "None"
     new_data_str = f"{baseline_total},{baseline_attended},{final_msg_id},{today_date}"
     
