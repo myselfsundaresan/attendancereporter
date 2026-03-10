@@ -64,11 +64,11 @@ Sensitive credentials are securely stored using **GitHub Secrets** so the bot ca
 |-------------|------|
 | `USER_ID` | Your college portal username / roll number |
 | `PASSWORD` | Your college portal password |
+| `BASE_URL` | **(Optional)** Your college portal link (e.g., `https://arms.sse.saveetha.com`). **Defaults to SMC - for Saveetha Medical College** if left blank. |
 | `BOT_TOKEN` | Token from **@BotFather** on Telegram |
 | `CHAT_ID` | Your ID from **@userinfobot** on Telegram |
 | `GH_PAT` | A GitHub Personal Access Token (Classic) with **workflow scope** |
 | `REPO_FULL_NAME` | Your GitHub repository path (example: `username/attendancereporter`) |
-| `BASE_URL` | (Optional) Your college portal link (e.g., `https://arms.sse.saveetha.com`). Defaults to SMC - for Saveetha Medical College if left blank. |
 
 ---
 
