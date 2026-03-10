@@ -12,8 +12,11 @@ from selenium.webdriver.support import expected_conditions as EC
 # --- CONFIGURATION ---
 FILE_NAME = "last_attendance.txt"
 
-# Fetch BASE_URL from secrets (Default to SMC if user forgets to add it)
-BASE_URL = os.environ.get('BASE_URL', 'https://arms.smc.saveetha.com').rstrip('/')
+# Safely fetch BASE_URL (Handles GitHub Actions empty strings)
+BASE_URL = os.environ.get('BASE_URL', '').strip()
+if not BASE_URL:
+    BASE_URL = 'https://arms.smc.saveetha.com'
+BASE_URL = BASE_URL.rstrip('/')
 
 LOGIN_URL = f"{BASE_URL}/Login.aspx"
 REPORT_URL = f"{BASE_URL}/StudentPortal/AttendanceReport.aspx"
