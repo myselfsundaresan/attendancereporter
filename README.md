@@ -31,6 +31,7 @@ This project is designed to demonstrate **practical automation skills, API integ
 🔹 Recent Advances in Mol..: 4/4 (100.0%)
 🔹 Library Hour: 17/19 (89.47%)
 ━━━━━━━━━━━━━━━━━━━━━
+📈 Total Overall: 35/37 (94.59%)
 ```
 
 ---
@@ -69,7 +70,60 @@ Click **Fork** (top-right of this page) to create your personal copy of the repo
 
 ---
 
-#### 2. Configure GitHub Secrets
+#### 2. Create Your Telegram Bot
+
+Before filling in GitHub Secrets, you need a **Bot Token** and your **Chat ID** from Telegram.
+
+---
+
+##### Part A — Get Your `BOT_TOKEN` from @BotFather
+
+**Step 1 — Open BotFather**
+- Open Telegram and search for **`@BotFather`**
+- It is the **official verified bot** with a blue checkmark ✓
+- Tap on it and press **Start**
+
+**Step 2 — Create a new bot**
+- Send the command: `/newbot`
+- BotFather will ask you to choose a **display name** for your bot
+- Enter any name you like (e.g. `My Attendance Bot`)
+
+**Step 3 — Choose a username**
+- BotFather will then ask for a **username**
+- It must be unique and **must end with** `bot`
+- Example: `my_attendance_bot` or `SaveethaTrackerBot`
+
+**Step 4 — Copy your Bot Token**
+- BotFather will reply with your token. It looks like this:
+  ```
+  7123456789:AAFxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  ```
+- Copy this entire string — this is your **`BOT_TOKEN`**
+- ⚠️ **Never share this token publicly**
+
+**Step 5 — Start a chat with your new bot**
+- Search your bot's username in Telegram and press **Start**
+- This is required — the bot **cannot send you messages** until you initiate the conversation first
+
+---
+
+##### Part B — Get Your `CHAT_ID` from @userinfobot
+
+**Step 1 — Open userinfobot**
+- In Telegram, search **`@userinfobot`** and press **Start**
+
+**Step 2 — Copy your ID**
+- The bot will instantly reply with your account details:
+  ```
+  Id: 987654321
+  First: Your Name
+  Username: @yourhandle
+  ```
+- Copy the number next to **Id:** — this is your **`CHAT_ID`**
+
+---
+
+#### 3. Configure GitHub Secrets
 Sensitive credentials are securely stored using **GitHub Secrets** so the bot can log into the portal automatically.
 
 ##### Navigation
@@ -85,14 +139,14 @@ Sensitive credentials are securely stored using **GitHub Secrets** so the bot ca
 | `USER_ID` | Your college portal username / roll number |
 | `PASSWORD` | Your college portal password |
 | `BASE_URL` | **(Optional)** Your college portal link (e.g., `https://arms.sse.saveetha.com`). **Defaults to SMC - for Saveetha Medical College** if left blank. |
-| `BOT_TOKEN` | Token from **@BotFather** on Telegram |
-| `CHAT_ID` | Your ID from **@userinfobot** on Telegram |
+| `BOT_TOKEN` | Token copied from **@BotFather** (Step 2A above) |
+| `CHAT_ID` | Your ID copied from **@userinfobot** (Step 2B above) |
 | `GH_PAT` | A GitHub Personal Access Token (Classic) with **workflow scope** |
 | `REPO_FULL_NAME` | Your GitHub repository path (example: `username/attendancereporter`) |
 
 ---
 
-#### 3. Initialize Attendance Memory
+#### 4. Initialize Attendance Memory
 
 Because this bot uses dynamic multi-subject tracking, it requires a JSON structure.  
 Edit the file **`last_attendance.txt`** in your repository, delete everything inside, and set it to exactly this:
