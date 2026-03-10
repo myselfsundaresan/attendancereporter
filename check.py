@@ -1,4 +1,5 @@
 import os
+import json
 import time
 import requests
 from datetime import datetime, timezone, timedelta
@@ -84,21 +85,17 @@ def send_message(msg):
         print(f"❌ Send Error: {e}")
         return None
 
-# 1. READ MEMORY (Format: "BaselineTotal,BaselineAttended,MessageID,Date")
-stored_total = 0
-stored_attended = 0
-stored_msg_id = None
-stored_date = ""
+# 1. READ JSON MEMORY
+stored_data = {"date": "", "message_id": None, "subjects": {}}
 
 try:
     if os.path.exists(FILE_NAME):
         with open(FILE_NAME, "r") as f:
-            content = f.read().strip().split(',')
-            if len(content) == 4:
-                stored_total = int(content[0])
-                stored_attended = int(content[1])
-                stored_msg_id = int(content[2]) if content[2] != 'None' else None
-                stored_date = content[3]
+            content = f.read().strip()
+            if content.startswith("{"):  # Check if it's valid JSON format
+                stored_data = json.loads(content)
+            else:
+                print("⚠️ Old memory format detected. Upgrading to JSON memory.")
 except Exception:
     print("⚠️ Memory file empty or corrupt. Starting fresh.")
 
@@ -129,55 +126,95 @@ try:
     wait.until(EC.url_contains("StudentPortal"))
     print("✅ Login Successful!")
 
-    # 4. NAVIGATE & EXTRACT DATA
+    # 4. NAVIGATE & EXTRACT DATA DYNAMICALLY
     print("➡️ Navigating to Attendance Report...")
     driver.get(REPORT_URL)
     
-    wait.until(EC.visibility_of_element_located((By.XPATH, "//table[@id='tblStudent']/tbody/tr[1]")))
+    wait.until(EC.visibility_of_element_located((By.XPATH, "//table[@id='tblStudent']/tbody/tr")))
     
-    current_total = int(driver.find_element(By.XPATH, "//table[@id='tblStudent']/tbody/tr[1]/td[6]").text)
-    current_attended = int(driver.find_element(By.XPATH, "//table[@id='tblStudent']/tbody/tr[1]/td[4]").text)
+    # Get all rows in the table
+    rows = driver.find_elements(By.XPATH, "//table[@id='tblStudent']/tbody/tr")
+    current_data = {}
     
-    print(f"📊 Extracted -> Total: {current_total}, Attended: {current_attended}")
+    for row in rows:
+        cols = row.find_elements(By.XPATH, "./td")
+        if len(cols) >= 6:
+            code = cols[1].text.strip()
+            name = cols[2].text.strip()
+            attended = int(cols[3].text.strip()) # Class Attended Column
+            total = int(cols[5].text.strip())    # Total Class Column
+            
+            # Store in a dictionary by Subject Code
+            current_data[code] = {"name": name, "attended": attended, "total": total}
 
-    # 5. LOGIC: DETERMINE BASELINE FOR TODAY
+    print(f"📊 Extracted data for {len(current_data)} subjects.")
+
+    # 5. LOGIC: DETERMINE BASELINE & CALCULATE STATS
     ist_timezone = timezone(timedelta(hours=5, minutes=30))
     now_ist = datetime.now(ist_timezone)
     
     today_date = now_ist.strftime("%d-%m-%Y")
     current_time = now_ist.strftime("%I:%M %p")
     
-    # Check if it's a new day to reset the baseline
-    if stored_date != today_date:
+    # Check if it's a new day
+    is_new_day = stored_data.get("date") != today_date
+    
+    if is_new_day:
         print(f"📅 New Day ({today_date})! Setting baseline to current values.")
-        # On the first run of a new day, current counts are the '0' point for today
-        baseline_total = current_total
-        baseline_attended = current_attended
-        msg_id_to_delete = None 
+        msg_id_to_delete = None
+        baseline_subjects = {}
     else:
         print("📅 Same Day. Using stored morning baseline.")
-        baseline_total = stored_total
-        baseline_attended = stored_attended
-        msg_id_to_delete = stored_msg_id 
+        msg_id_to_delete = stored_data.get("message_id")
+        baseline_subjects = stored_data.get("subjects", {})
 
-    # Calculate Today's Stats
-    today_classes_held = current_total - baseline_total
-    today_classes_present = current_attended - baseline_attended
-    
-    percentage = round((current_attended / current_total) * 100, 2) if current_total > 0 else 0.0
+    today_msg_lines = []
+    total_overall_classes = 0
+    total_overall_attended = 0
+
+    # Calculate differences subject by subject
+    for code, data in current_data.items():
+        total_overall_classes += data["total"]
+        total_overall_attended += data["attended"]
+        
+        # Get baseline for this specific subject
+        if is_new_day or code not in baseline_subjects:
+            baseline_subjects[code] = {"name": data["name"], "total": data["total"], "attended": data["attended"]}
+            base_total = data["total"]
+            base_attended = data["attended"]
+        else:
+            base_total = baseline_subjects[code]["total"]
+            base_attended = baseline_subjects[code]["attended"]
+            
+        # Calculate what happened TODAY for this subject
+        today_held = data["total"] - base_total
+        today_present = data["attended"] - base_attended
+        
+        # Only add to message if a class was actually held today for this subject
+        if today_held > 0:
+            # Shorten very long subject names to keep the Telegram message clean
+            short_name = data["name"][:25] + ".." if len(data["name"]) > 25 else data["name"]
+            today_msg_lines.append(f"🔹 *{short_name}* ({code})\n      Held: {today_held} | Present: {today_present}")
+
+    # Build the Subject-wise string
+    if not today_msg_lines:
+        today_str = "💤 No classes updated yet today."
+    else:
+        today_str = "\n".join(today_msg_lines)
+
+    overall_percentage = round((total_overall_attended / total_overall_classes) * 100, 2) if total_overall_classes > 0 else 0.0
 
     # 6. BUILD MESSAGE
     msg = (f"📅 *Daily Attendance Tracker* ({today_date})\n"
            f"⏰ Last Checked: {current_time}\n"
            f"-----------------------------\n"
-           f"📝 *Today's Stats*\n"
-           f"✅ No. of classes present: {today_classes_present}\n"
-           f"🏫 No. of classes today: {today_classes_held}\n"
+           f"📝 *Today's Updates*\n"
+           f"{today_str}\n"
            f"-----------------------------\n"
-           f"📊 *Overall Stats*\n"
-           f"🏫 Total Classes: {current_total}\n"
-           f"✅ Total Attended: {current_attended}\n"
-           f"📈 Percentage: *{percentage}%*")
+           f"📊 *Overall Stats (All Subjects)*\n"
+           f"🏫 Total Classes: {total_overall_classes}\n"
+           f"✅ Total Attended: {total_overall_attended}\n"
+           f"📈 Percentage: *{overall_percentage}%*")
 
     # 7. DELETE OLD -> SEND NEW
     if msg_id_to_delete:
@@ -185,13 +222,16 @@ try:
         
     sent_msg_id = send_message(msg)
     
-    # 8. SAVE MEMORY
-    final_msg_id = sent_msg_id if sent_msg_id else "None"
-    new_data_str = f"{baseline_total},{baseline_attended},{final_msg_id},{today_date}"
+    # 8. SAVE JSON MEMORY
+    new_memory = {
+        "date": today_date,
+        "message_id": sent_msg_id,
+        "subjects": baseline_subjects
+    }
     
     with open(FILE_NAME, "w") as f:
-        f.write(new_data_str)
-        print("💾 Memory updated.")
+        json.dump(new_memory, f, indent=4)
+        print("💾 JSON Memory updated.")
 
 except Exception as e:
     print(f"❌ Error: {e}")
