@@ -31,7 +31,6 @@ This project is designed to demonstrate **practical automation skills, API integ
 🔹 Recent Advances in Mol..: 4/4 (100.0%)
 🔹 Library Hour: 17/19 (89.47%)
 ━━━━━━━━━━━━━━━━━━━━━
-📈 Total Overall: 35/37 (94.59%)
 ```
 
 ---
