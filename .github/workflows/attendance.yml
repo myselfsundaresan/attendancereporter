@@ -33,6 +33,7 @@ jobs:
         env:
           USER_ID: ${{ secrets.USER_ID }}
           PASSWORD: ${{ secrets.PASSWORD }}
+          BASE_URL: ${{ secrets.BASE_URL }}
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
           GH_PAT: ${{ secrets.GH_PAT }}
