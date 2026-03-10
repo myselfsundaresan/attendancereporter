@@ -172,6 +172,7 @@ try:
         baseline_subjects = stored_data.get("subjects", {})
 
     today_msg_lines = []
+    subject_stats_lines = []
     total_overall_classes = 0
     total_overall_attended = 0
 
@@ -193,31 +194,40 @@ try:
         today_held = data["total"] - base_total
         today_present = data["attended"] - base_attended
         
-        # Only add to message if a class was actually held today for this subject
+        # Shorten long subject names
+        short_name = data["name"][:22] + ".." if len(data["name"]) > 22 else data["name"]
+        
+        # Build "Today's Updates" Section
         if today_held > 0:
-            # Shorten very long subject names to keep the Telegram message clean
-            short_name = data["name"][:25] + ".." if len(data["name"]) > 25 else data["name"]
-            today_msg_lines.append(f"🔹 *{short_name}* ({code})\n      Held: {today_held} | Present: {today_present}")
+            today_msg_lines.append(f"🔹 {short_name} ({code})\n      Held: {today_held} | Present: {today_present}")
 
-    # Build the Subject-wise string
+        # Build "Subject-Wise Stats" Section
+        subj_perc = round((data["attended"] / data["total"]) * 100, 2) if data["total"] > 0 else 0.0
+        subject_stats_lines.append(f"🔹 {short_name}: {data['attended']}/{data['total']} ({subj_perc}%)")
+
+    # Build the final strings for the message
     if not today_msg_lines:
         today_str = "💤 No classes updated yet today."
     else:
         today_str = "\n".join(today_msg_lines)
-
+        
+    subject_stats_str = "\n".join(subject_stats_lines)
     overall_percentage = round((total_overall_attended / total_overall_classes) * 100, 2) if total_overall_classes > 0 else 0.0
+
+    # Clean Separator
+    SEP = "-----------------------------"
 
     # 6. BUILD MESSAGE
     msg = (f"📅 *Daily Attendance Tracker* ({today_date})\n"
            f"⏰ Last Checked: {current_time}\n"
-           f"-----------------------------\n"
+           f"{SEP}\n"
            f"📝 *Today's Updates*\n"
            f"{today_str}\n"
-           f"-----------------------------\n"
-           f"📊 *Overall Stats (All Subjects)*\n"
-           f"🏫 Total Classes: {total_overall_classes}\n"
-           f"✅ Total Attended: {total_overall_attended}\n"
-           f"📈 Percentage: *{overall_percentage}%*")
+           f"{SEP}\n"
+           f"📊 *Subject-Wise Stats*\n"
+           f"{subject_stats_str}\n"
+           f"{SEP}\n"
+           f"📈 *Total Overall*: {total_overall_attended}/{total_overall_classes} ({overall_percentage}%)")
 
     # 7. DELETE OLD -> SEND NEW
     if msg_id_to_delete:
