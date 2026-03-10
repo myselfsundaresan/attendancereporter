@@ -173,14 +173,9 @@ try:
 
     today_msg_lines = []
     subject_stats_lines = []
-    total_overall_classes = 0
-    total_overall_attended = 0
 
     # Calculate differences subject by subject
     for code, data in current_data.items():
-        total_overall_classes += data["total"]
-        total_overall_attended += data["attended"]
-        
         # Get baseline for this specific subject
         if is_new_day or code not in baseline_subjects:
             baseline_subjects[code] = {"name": data["name"], "total": data["total"], "attended": data["attended"]}
@@ -199,11 +194,11 @@ try:
         
         # Build "Today's Updates" Section
         if today_held > 0:
-            today_msg_lines.append(f"🔹 {short_name} ({code})\n      Held: {today_held} | Present: {today_present}")
+            today_msg_lines.append(f"🔹 *{short_name}* ({code})\n      Held: {today_held} | Present: {today_present}")
 
         # Build "Subject-Wise Stats" Section
         subj_perc = round((data["attended"] / data["total"]) * 100, 2) if data["total"] > 0 else 0.0
-        subject_stats_lines.append(f"🔹 {short_name}: {data['attended']}/{data['total']} ({subj_perc}%)")
+        subject_stats_lines.append(f"🔹 *{short_name}*: {data['attended']}/{data['total']} ({subj_perc}%)")
 
     # Build the final strings for the message
     if not today_msg_lines:
@@ -212,12 +207,11 @@ try:
         today_str = "\n".join(today_msg_lines)
         
     subject_stats_str = "\n".join(subject_stats_lines)
-    overall_percentage = round((total_overall_attended / total_overall_classes) * 100, 2) if total_overall_classes > 0 else 0.0
 
-    # Clean Separator
-    SEP = "-----------------------------"
+    # UPDATED: Solid line separator
+    SEP = "━━━━━━━━━━━━━━━━━━━━━"
 
-    # 6. BUILD MESSAGE
+    # 6. BUILD MESSAGE (No overall total, solid lines)
     msg = (f"📅 *Daily Attendance Tracker* ({today_date})\n"
            f"⏰ Last Checked: {current_time}\n"
            f"{SEP}\n"
@@ -226,8 +220,7 @@ try:
            f"{SEP}\n"
            f"📊 *Subject-Wise Stats*\n"
            f"{subject_stats_str}\n"
-           f"{SEP}\n"
-           f"📈 *Total Overall*: {total_overall_attended}/{total_overall_classes} ({overall_percentage}%)")
+           f"{SEP}")
 
     # 7. DELETE OLD -> SEND NEW
     if msg_id_to_delete:
