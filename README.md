@@ -1,139 +1,203 @@
-# Saveetha Attendance Bot
+# Saveetha Attendance Bot (Pro)
 
 ## 🎓 About the Project
 
-**Saveetha Attendance Bot** is a student-friendly automation project that helps you monitor your college attendance daily without manual checking.
+**Saveetha Attendance Bot (Pro)** is an automated student assistant designed to monitor your college attendance daily. It removes the need for manual portal logins by delivering a smart, self-updating **Daily Tracker** directly to your Telegram.
 
 Once configured, the bot:
 - Automatically logs into the college portal  
-- Checks attendance multiple times a day (**9 AM, 11 AM, 2 PM IST**)  
-- **Smart Messaging:** Sends a single *Daily Tracker* message that updates itself throughout the day instead of spamming  
-- Applies logical comparison (not just raw numbers)  
+- Tracks attendance using **baseline comparison logic**  
+- Sends a **clean Daily Tracker message** directly to Telegram  
+- Updates attendance information automatically throughout the day  
+- Avoids manual attendance checking completely  
 
-This project is designed to demonstrate **practical automation skills** suitable for college projects and internships.
-
----
-
-## 🧠 Attendance Logic
-
-The bot tracks attendance in real time by comparing **Start-of-Day counts** against **Current counts**.
-
-Instead of a simple *Present / Absent* status, it provides a detailed daily breakdown:
-
-- **No. of classes today:** Total classes conducted since 9:00 AM  
-- **No. of classes present:** Classes you actually attended  
-
-This approach correctly handles **multiple classes per day** and produces an accurate daily summary.
+This project is designed to demonstrate **practical automation skills, API integration, and workflow automation** suitable for college projects and portfolios.
 
 ---
 
-## 🔄 Dynamic Updates
+## 🧠 Smart Attendance Logic
 
-Instead of sending multiple messages a day, the bot uses the **Telegram Edit API**.
+Unlike basic trackers, this bot uses **Baseline Comparison Logic**.
 
-- **Morning:** Sends a fresh *Daily Tracker* message  
-- **Afternoon:** Edits the same message with updated counts and timestamps  
+### Morning Reset
+Every morning, the bot captures your **current portal attendance counts** and stores them as the **Baseline**.
 
-This keeps notifications clean, minimal, and informative.
+### Today's Stats
+It calculates:
+
+
+Current Count - Morning Baseline
+
+
+This ensures the bot shows **exactly how many classes were held today**, instead of relying on raw totals.
+
+### Dynamic Messaging
+Instead of sending multiple messages:
+
+- The bot **deletes the previous message**
+- Sends a **fresh Daily Tracker message**
+- This keeps your Telegram chat **clean while still triggering notifications**
 
 ---
 
-## 🚀 Setup Guide (Beginner Friendly)
+## 🚀 Setup Guide
 
-### 1. Fork the Repository
-Click **Fork** (top-right of this page) to create your own copy.
+### Phase 1: Basic Setup (Mandatory)
 
-### 2. Add GitHub Secrets
-GitHub stores sensitive information securely using **Secrets**.
+#### 1. Fork the Repository
+Click **Fork** (top-right of this page) to create your personal copy of the repository.
 
-#### Navigation
-1. Open your repository  
-2. Click **Settings**  
-3. Go to **Secrets and variables → Actions**  
-4. Click **New repository secret**  
+---
 
-#### Required Secrets
+#### 2. Configure GitHub Secrets
+Sensitive credentials are securely stored using **GitHub Secrets** so the bot can log into the portal automatically.
 
-| Name | Value |
-|------|------|
-| `USER_ID` | Your college roll number / login ID |
+##### Navigation
+1. Open your **forked repository**  
+2. Go to **Settings**  
+3. Click **Secrets and variables → Actions**  
+4. Click **New repository secret**
+
+##### Required Secrets
+
+| Secret Name | Value |
+|-------------|------|
+| `USER_ID` | Your college portal username / roll number |
 | `PASSWORD` | Your college portal password |
-| `BOT_TOKEN` | Telegram bot token from **@BotFather** |
-| `CHAT_ID` | Telegram chat ID from **@userinfobot** |
-
-After adding all four, they should appear in the secrets list.
+| `BOT_TOKEN` | Token from **@BotFather** on Telegram |
+| `CHAT_ID` | Your ID from **@userinfobot** on Telegram |
+| `GH_PAT` | A GitHub Personal Access Token (Classic) with **workflow scope** |
+| `REPO_FULL_NAME` | Your GitHub repository path (example: `username/attendancereporter`) |
 
 ---
 
-## 🧠 Initialize Attendance Memory
+### 🧠 Initialize Attendance Memory
 
-Create a file named **`last_attendance.txt`** in the repository root and add **exactly this line**:
+Edit the file **`last_attendance.txt`** in your repository and set it to:
 
-```
-0,0,None,01-01-2000
-```
+
+`0,0,None,01-01-2000`
+
 
 ### What this means
-- `0,0` → Starting counts for Total and Attended classes  
-- `None` → No message sent yet today  
-- `01-01-2000` → Forces a fresh tracker message on first run  
+- `0,0` → Initial counts for total and attended classes  
+- `None` → No Telegram message created yet  
+- `01-01-2000` → Forces a fresh Daily Tracker message on the first run  
 
 ---
 
-## ⏰ Enable Automation
+## 🔄 Phase 2: "Refresh Now" Button (Optional)
 
-- Open the **Actions** tab  
-- Enable workflows  
+The **Refresh Now** button allows you to trigger an attendance check instantly from Telegram.
 
-⏱️ The bot runs automatically **multiple times daily**:
-- 9:00 AM  
-- 11:00 AM  
-- 2:00 PM (IST)
+Since **GitHub Actions cannot listen to Telegram button clicks**, a **listener service** is required.
 
 ---
 
-## ❓ Beginner FAQ
+## 🛠️ Cloudflare Worker Setup (The Listener)
 
-**Do I need programming knowledge?**  
-No. Setup is simple and beginner-friendly.
+### 1. Create Worker
+1. Log in to **Cloudflare**  
+2. Navigate to **Workers & Pages**  
+3. Click **Create application**  
+4. Select **Create Worker**
 
-**Will this modify my attendance?**  
-No. It only checks and reports attendance.
+---
+
+### 2. Deploy Worker
+- Click **Deploy**  
+- After deployment, click **Edit Code**
+
+---
+
+### 3. Paste Worker Code
+Replace everything inside **worker.js** with the **Webhook script provided during setup**.
+
+---
+
+### 4. Add Environment Variables
+
+Go to:
+
+
+Worker Settings → Variables → Environment Variables
+
+
+Add the following variables:
+
+| Variable | Value |
+|---------|------|
+| `BOT_TOKEN` | Same Telegram bot token used in GitHub |
+| `GH_PAT` | Same GitHub Personal Access Token |
+| `REPO_FULL_NAME` | Same repository path |
+
+---
+
+### 5. Activate Telegram Webhook
+
+Copy your **Worker URL** and open this link in your browser:
+
+
+`https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook?url=<YOUR_WORKER_URL>`
+
+Replace `<YOUR_BOT_TOKEN>` with your BOT Token from Telegram Bot Father
+
+
+Replace `<YOUR_WORKER_URL>` with your worker url from Cloudfare
+
+
+This connects your Telegram bot to the Cloudflare listener.
+
+---
+
+> [!NOTE]  
+> **Don't want to use Cloudflare?**  
+> If you skip Phase 2, the bot will still run automatically **3 times a day**.  
+> However, do **not click the "Refresh Now" button** in Telegram because GitHub Actions cannot process the request without the listener.
+
+---
+
+## ⏰ Automation Schedule
+
+The bot runs automatically through **GitHub Actions workflows** at the following times:
+
+- **09:00 AM IST** → Morning Baseline  
+- **11:00 AM IST** → Mid-day Update  
+- **02:00 PM IST** → Afternoon Summary  
+
+These scheduled runs keep your **Daily Tracker updated throughout the day**.
+
+---
+
+## ❓ FAQ
 
 **Is my password safe?**  
-Yes. Stored securely using GitHub Secrets.
+Yes. Your credentials are stored securely inside **GitHub Secrets** and never printed in logs.
 
-**What happens on holidays?**  
-No change in total classes → bot stays silent or updates the message with *No classes yet*.
+**What if I have a holiday?**  
+The bot will detect **0 new classes** and update the message accordingly with *0 classes held today*.
 
----
-
-## 🎯 Why This Is Useful for Attendance Shortage
-
-- Daily awareness of attendance status  
-- Early warning before dropping below limits  
-- Helps plan attendance recovery  
-- Avoids last-minute exam eligibility issues  
-- Especially useful for **75% attendance rules**  
+**Can I run it manually?**  
+Yes. Go to the **Actions tab** in your GitHub repository and click **Run workflow**.
 
 ---
 
 ## 🛠️ Tech Stack & Resume Value
 
-- **Python 3.9**
-- **Selenium (Headless Chrome)**
-- **GitHub Actions (Cron-based automation)**
-- **Telegram Bot API** (*SendMessage & EditMessageText*)
+- **Python**
+- **GitHub Actions (Scheduled automation)**
+- **Telegram Bot API**
+- **Cloudflare Workers (Webhook listener)**
 
 ### Skills Demonstrated
 - Automation scripting  
 - Secure credential handling  
 - Scheduled workflows  
 - API integration  
-- Real-world problem solving  
+- Cloud automation pipelines  
 
 Ideal for **college projects, resumes, and internship portfolios**.
 
 ---
 
-<sub>Built for educational purposes. Use responsibly.</sub>
+<sub>Built for educational purposes to demonstrate Python automation and API integration.</sub>
