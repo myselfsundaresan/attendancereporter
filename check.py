@@ -10,8 +10,12 @@ from selenium.webdriver.support import expected_conditions as EC
 
 # --- CONFIGURATION ---
 FILE_NAME = "last_attendance.txt"
-LOGIN_URL = "https://arms.smc.saveetha.com/Login.aspx"
-REPORT_URL = "https://arms.smc.saveetha.com/StudentPortal/AttendanceReport.aspx"
+
+# Fetch BASE_URL from secrets (Default to SMC if user forgets to add it)
+BASE_URL = os.environ.get('BASE_URL', 'https://arms.smc.saveetha.com').rstrip('/')
+
+LOGIN_URL = f"{BASE_URL}/Login.aspx"
+REPORT_URL = f"{BASE_URL}/StudentPortal/AttendanceReport.aspx"
 
 # --- HELPER: TELEGRAM FUNCTIONS ---
 def get_secrets():
