@@ -6,8 +6,8 @@
 
 Once configured, the bot:
 - Automatically logs into the college portal  
-- Tracks attendance using **baseline comparison logic**  
-- Sends a **clean Daily Tracker message** directly to Telegram  
+- Dynamically tracks attendance for **every single subject** individually  
+- Tracks attendance using **baseline comparison logic** - Sends a **clean Daily Tracker message** directly to Telegram  
 - Updates attendance information automatically throughout the day  
 - Avoids manual attendance checking completely  
 
@@ -17,19 +17,17 @@ This project is designed to demonstrate **practical automation skills, API integ
 
 ## 🧠 Smart Attendance Logic
 
-Unlike basic trackers, this bot uses **Baseline Comparison Logic**.
+Unlike basic trackers, this bot uses **Baseline Comparison Logic** combined with **Dynamic JSON Memory**.
 
-### Morning Reset
-Every morning, the bot captures your **current portal attendance counts** and stores them as the **Baseline**.
+### Subject-Wise Morning Reset
+Every morning, the bot scans your portal, identifies all your enrolled subjects, and captures the current attendance counts for **each specific subject** to store as the morning **Baseline**.
 
-### Today's Stats
+### Today's Stats (Itemized Tracking)
 It calculates:
 
+`Current Count - Morning Baseline (Per Subject)`
 
-Current Count - Morning Baseline
-
-
-This ensures the bot shows **exactly how many classes were held today**, instead of relying on raw totals.
+This ensures the bot shows **exactly how many classes were held today for which subjects**, rather than relying on raw overall numbers. It provides a detailed, itemized breakdown of what happened today, alongside your true combined overall percentage.
 
 ### Dynamic Messaging
 Instead of sending multiple messages:
@@ -53,9 +51,9 @@ Click **Fork** (top-right of this page) to create your personal copy of the repo
 Sensitive credentials are securely stored using **GitHub Secrets** so the bot can log into the portal automatically.
 
 ##### Navigation
-1. Open your **forked repository**  
-2. Go to **Settings**  
-3. Click **Secrets and variables → Actions**  
+1. Open your **forked repository**
+2. Go to **Settings**
+3. Click **Secrets and variables → Actions**
 4. Click **New repository secret**
 
 ##### Required Secrets
@@ -74,16 +72,14 @@ Sensitive credentials are securely stored using **GitHub Secrets** so the bot ca
 
 ### 🧠 Initialize Attendance Memory
 
-Edit the file **`last_attendance.txt`** in your repository and set it to:
+Because this bot uses dynamic multi-subject tracking, it requires a JSON structure. 
+Edit the file **`last_attendance.txt`** in your repository, delete everything inside, and set it to exactly this:
 
-
-`0,0,None,01-01-2000`
-
+`{}`
 
 ### What this means
-- `0,0` → Initial counts for total and attended classes  
-- `None` → No Telegram message created yet  
-- `01-01-2000` → Forces a fresh Daily Tracker message on the first run  
+- `{}` → An empty JSON dictionary.  
+- On its first run, the bot will automatically read your portal, extract all your subjects, and build a detailed memory map to track each one individually.  
 
 ---
 
@@ -98,16 +94,15 @@ Since **GitHub Actions cannot listen to Telegram button clicks**, a **listener s
 ## 🛠️ Cloudflare Worker Setup (The Listener)
 
 ### 1. Create Worker
-1. Log in to **Cloudflare**  
-2. Navigate to **Workers & Pages**  
-3. Click **Create application**  
+1. Log in to **Cloudflare**
+2. Navigate to **Workers & Pages**
+3. Click **Create application**
 4. Select **Create Worker**
 
 ---
 
 ### 2. Deploy Worker
-- Click **Deploy**  
-- After deployment, click **Edit Code**
+- Click **Deploy** - After deployment, click **Edit Code**
 
 ---
 
@@ -120,9 +115,7 @@ Replace everything inside **worker.js** with the **Webhook script provided durin
 
 Go to:
 
-
-Worker Settings → Variables → Environment Variables
-
+`Worker Settings → Variables → Environment Variables`
 
 Add the following variables:
 
@@ -138,22 +131,17 @@ Add the following variables:
 
 Copy your **Worker URL** and open this link in your browser:
 
-
 `https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook?url=<YOUR_WORKER_URL>`
 
-Replace `<YOUR_BOT_TOKEN>` with your BOT Token from Telegram Bot Father
-
-
-Replace `<YOUR_WORKER_URL>` with your worker url from Cloudfare
-
+*Replace `<YOUR_BOT_TOKEN>` with your BOT Token from Telegram Bot Father*
+*Replace `<YOUR_WORKER_URL>` with your worker url from Cloudflare*
 
 This connects your Telegram bot to the Cloudflare listener.
 
 ---
 
 > [!NOTE]  
-> **Don't want to use Cloudflare?**  
-> If you skip Phase 2, the bot will still run automatically **3 times a day**.  
+> **Don't want to use Cloudflare?** > If you skip Phase 2, the bot will still run automatically **3 times a day**.  
 > However, do **not click the "Refresh Now" button** in Telegram because GitHub Actions cannot process the request without the listener.
 
 ---
@@ -172,14 +160,11 @@ These scheduled runs keep your **Daily Tracker updated throughout the day**.
 
 ## ❓ FAQ
 
-**Is my password safe?**  
-Yes. Your credentials are stored securely inside **GitHub Secrets** and never printed in logs.
+**Is my password safe?** Yes. Your credentials are stored securely inside **GitHub Secrets** and never printed in logs.
 
-**What if I have a holiday?**  
-The bot will detect **0 new classes** and update the message accordingly with *0 classes held today*.
+**What if I have a holiday?** The bot will detect **0 new classes** for all subjects and update the message accordingly with *No classes updated yet today*.
 
-**Can I run it manually?**  
-Yes. Go to the **Actions tab** in your GitHub repository and click **Run workflow**.
+**Can I run it manually?** Yes. Go to the **Actions tab** in your GitHub repository and click **Run workflow**.
 
 ---
 
