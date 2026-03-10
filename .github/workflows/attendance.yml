@@ -4,7 +4,9 @@ on:
   schedule:
     # Runs at 3:30, 5:30, and 8:30 UTC (9am, 11am, 2pm IST)
     - cron: '30 3,5,8 * * *'
-  workflow_dispatch: # Allows manual testing
+  workflow_dispatch: # Allows manual testing from GitHub UI
+  repository_dispatch:
+    types: [trigger_gh_action] # This allows the Telegram button to trigger the bot
 
 jobs:
   check-attendance:
@@ -26,12 +28,15 @@ jobs:
         run: |
           pip install selenium requests
         
+      # The env section now includes GH_PAT and REPO_FULL_NAME for API features
       - name: Run Attendance Script
         env:
           USER_ID: ${{ secrets.USER_ID }}
           PASSWORD: ${{ secrets.PASSWORD }}
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
+          GH_PAT: ${{ secrets.GH_PAT }}
+          REPO_FULL_NAME: ${{ secrets.REPO_FULL_NAME }}
         run: python check.py
         
       - name: Update Memory File
@@ -48,7 +53,7 @@ jobs:
             
             git commit -m "Update attendance memory [skip ci]"
             
-            # --- THE FIX: Pull latest changes first to prevent conflicts ---
+            # Pull latest changes first to prevent conflicts
             git pull --rebase origin main
             
             # Now push
