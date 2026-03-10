@@ -15,18 +15,20 @@ REPORT_URL = "https://arms.smc.saveetha.com/StudentPortal/AttendanceReport.aspx"
 
 # --- HELPER: TELEGRAM FUNCTIONS ---
 def get_secrets():
-    token = os.environ.get('BOT_TOKEN')
-    chat_id = os.environ.get('CHAT_ID')
-    if not token or not chat_id:
-        print("❌ DEBUG ERROR: BOT_TOKEN or CHAT_ID is missing!")
-        return None, None
-    return token, chat_id
+    return {
+        "token": os.environ.get('BOT_TOKEN'),
+        "chat_id": os.environ.get('CHAT_ID'),
+        "gh_pat": os.environ.get('GH_PAT'),
+        "repo": os.environ.get('REPO_FULL_NAME')
+    }
 
 def delete_message(message_id):
     """Deletes a specific message to keep chat clean."""
     if not message_id: return
     
-    token, chat_id = get_secrets()
+    secrets = get_secrets()
+    token = secrets['token']
+    chat_id = secrets['chat_id']
     if not token: return
 
     try:
@@ -37,18 +39,32 @@ def delete_message(message_id):
         if response.status_code == 200:
             print(f"🗑️ Deleted old message ID: {message_id}")
         else:
-            print(f"⚠️ Could not delete message {message_id} (It might not exist anymore). API: {response.text}")
+            print(f"⚠️ Could not delete message {message_id}. API: {response.text}")
     except Exception as e:
         print(f"❌ Delete Error: {e}")
 
 def send_message(msg):
-    """Sends a fresh message (triggers notification sound)."""
-    token, chat_id = get_secrets()
+    """Sends a fresh message with a Refresh button."""
+    secrets = get_secrets()
+    token = secrets['token']
+    chat_id = secrets['chat_id']
     if not token: return None
+
+    # Inline Keyboard Button to trigger the GitHub workflow via repository_dispatch
+    reply_markup = {
+        "inline_keyboard": [[
+            {"text": "🔄 Refresh Now", "callback_data": "trigger_gh_action"}
+        ]]
+    }
 
     try:
         url = f"https://api.telegram.org/bot{token}/sendMessage"
-        payload = {"chat_id": chat_id, "text": msg, "parse_mode": "Markdown"}
+        payload = {
+            "chat_id": chat_id, 
+            "text": msg, 
+            "parse_mode": "Markdown",
+            "reply_markup": reply_markup
+        }
         
         print(f"📨 Sending new message...")
         response = requests.post(url, json=payload)
@@ -64,7 +80,7 @@ def send_message(msg):
         print(f"❌ Send Error: {e}")
         return None
 
-# 1. READ MEMORY (Format: "StartTotal,StartAttended,MessageID,Date")
+# 1. READ MEMORY (Format: "BaselineTotal,BaselineAttended,MessageID,Date")
 stored_total = 0
 stored_attended = 0
 stored_msg_id = None
@@ -106,29 +122,17 @@ try:
     driver.find_element(By.ID, "btnlogin").click()
     print("⏳ Login submitted. Waiting for dashboard...")
 
-    try:
-        wait.until(EC.url_contains("StudentPortal"))
-        print("✅ Login Successful! Redirected to Portal.")
-    except:
-        print(f"⚠️ Warning: URL is still {driver.current_url}")
-        try:
-            error_msg = driver.find_element(By.ID, "lblError").text
-            raise Exception(f"Login Failed: {error_msg}")
-        except:
-            pass
+    wait.until(EC.url_contains("StudentPortal"))
+    print("✅ Login Successful!")
 
     # 4. NAVIGATE & EXTRACT DATA
     print("➡️ Navigating to Attendance Report...")
     driver.get(REPORT_URL)
     
-    row_xpath = "//table[@id='tblStudent']/tbody/tr[1]"
-    wait.until(EC.visibility_of_element_located((By.XPATH, row_xpath)))
+    wait.until(EC.visibility_of_element_located((By.XPATH, "//table[@id='tblStudent']/tbody/tr[1]")))
     
-    total_xpath = "//table[@id='tblStudent']/tbody/tr[1]/td[6]"
-    attended_xpath = "//table[@id='tblStudent']/tbody/tr[1]/td[4]"
-    
-    current_total = int(driver.find_element(By.XPATH, total_xpath).text)
-    current_attended = int(driver.find_element(By.XPATH, attended_xpath).text)
+    current_total = int(driver.find_element(By.XPATH, "//table[@id='tblStudent']/tbody/tr[1]/td[6]").text)
+    current_attended = int(driver.find_element(By.XPATH, "//table[@id='tblStudent']/tbody/tr[1]/td[4]").text)
     
     print(f"📊 Extracted -> Total: {current_total}, Attended: {current_attended}")
 
@@ -139,24 +143,15 @@ try:
     today_date = now_ist.strftime("%d-%m-%Y")
     current_time = now_ist.strftime("%I:%M %p")
     
-    # --- LOGIC UPDATE: Use Yesterday's Count as Baseline ---
+    # Check if it's a new day to reset the baseline
     if stored_date != today_date:
-        print("📅 New Day Detected!")
-        # If we have valid stored data from yesterday, use it as the starting point (baseline).
-        # This captures classes that happened today BEFORE this script ran.
-        if stored_total > 0 and current_total >= stored_total:
-             baseline_total = stored_total
-             baseline_attended = stored_attended
-        else:
-             # Fallback: First run ever OR Semester reset (Current < Stored)
-             print("⚠️ First run or data reset detected. Starting fresh from current.")
-             baseline_total = current_total
-             baseline_attended = current_attended
-             
+        print(f"📅 New Day ({today_date})! Setting baseline to current values.")
+        # On the first run of a new day, current counts are the '0' point for today
+        baseline_total = current_total
+        baseline_attended = current_attended
         msg_id_to_delete = None 
     else:
-        print("📅 Same Day. Keeping previous baseline.")
-        # Keep the morning's baseline so we can calculate the cumulative difference for today
+        print("📅 Same Day. Using stored morning baseline.")
         baseline_total = stored_total
         baseline_attended = stored_attended
         msg_id_to_delete = stored_msg_id 
@@ -187,7 +182,6 @@ try:
     sent_msg_id = send_message(msg)
     
     # 8. SAVE MEMORY
-    # Save the BASELINE (Start of Day), not current, so the math works for the next run today
     final_msg_id = sent_msg_id if sent_msg_id else "None"
     new_data_str = f"{baseline_total},{baseline_attended},{final_msg_id},{today_date}"
     
@@ -199,6 +193,5 @@ except Exception as e:
     print(f"❌ Error: {e}")
     error_message = f"⚠️ *Bot Crashed*\nError: `{str(e)}`"
     send_message(error_message)
-
 finally:
     driver.quit()
