@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saveetha Attendance Bot (Pro) | Technical Documentation</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+
+    <style>
+        :root {
+            --accent-primary: #FD6F00; 
+            --accent-rgb: 253, 111, 0; 
+            --bg-darker: #0B0B0B;
+            --bg-card: #1E1E1E;
+            --text-main: #FEFEFE;
+            --text-muted: #9CA3AF;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-darker);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Portfolio Design System Components */
+        .glass-card {
+            background-color: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border-radius: 2rem;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(253, 111, 0, 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 20px rgba(253, 111, 0, 0.1);
+        }
+
+        .btn-accent {
+            background-color: var(--accent-primary);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-accent:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(253, 111, 0, 0.5);
+        }
+
+        .stroke-text {
+            -webkit-text-stroke: 1px rgba(255,255,255,0.1);
+            color: transparent;
+        }
+
+        code {
+            background: rgba(253, 111, 0, 0.1);
+            color: var(--accent-primary);
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: #000;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        pre code {
+            background: transparent;
+            color: var(--text-main);
+            padding: 0;
+        }
+
+        /* Table Styling */
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th { text-align: left; color: var(--accent-primary); border-bottom: 2px solid var(--accent-primary); padding: 1rem; background: rgba(255,255,255,0.02); }
+        td { padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); color: var(--text-muted); }
+        tr:hover td { background: rgba(255,255,255,0.01); color: var(--text-main); }
+
+        .step-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            background: var(--accent-primary);
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-right: 0.75rem;
+        }
+
+        .note-box {
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid #ffc107;
+            padding: 1.5rem;
+            border-radius: 0 1rem 1rem 0;
+            margin: 2rem 0;
+        }
+        
+        .skill-tag {
+            background-color: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 9999px;
+            padding: 8px 20px;
+            font-weight: 500;
+            color: var(--text-main);
+            transition: all 0.3s ease;
+        }
+        .skill-tag:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+    </style>
+</head>
+<body class="selection:bg-[var(--accent-primary)] selection:text-white">
+
+    <header class="pt-24 pb-16 px-4 text-center relative overflow-hidden">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-[var(--accent-primary)]/10 to-transparent pointer-events-none"></div>
+        <div class="max-w-4xl mx-auto relative z-10">
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight">
+                Saveetha <span class="text-[var(--accent-primary)]">Attendance Bot</span> (Pro)
+            </h1>
+            <p class="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed font-light">
+                An automated student assistant designed to monitor your college attendance daily. It removes the need for manual portal logins by delivering a smart, self-updating Daily Tracker directly to your Telegram.
+            </p>
+            <div class="mt-10 flex flex-wrap justify-center gap-4">
+                <a href="#setup" class="btn-accent px-8 py-4 rounded-full font-bold text-lg">Setup Guide</a>
+                <a href="https://github.com/myselfsundaresan/attendancereporter" target="_blank" class="border border-gray-700 px-8 py-4 rounded-full font-bold hover:bg-white hover:text-black transition-all text-lg flex items-center gap-2">
+                    <span class="material-symbols-outlined">code</span> View Source
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 pb-24">
+        
+        <section class="glass-card">
+            <h2 class="text-3xl font-bold mb-6 flex items-center gap-3">
+                <span class="material-symbols-outlined text-4xl text-[var(--accent-primary)]">school</span>
+                About the Project
+            </h2>
+            <p class="text-gray-400 text-lg mb-6">Once configured, the bot:</p>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="flex items-start gap-3 bg-black/20 p-4 rounded-xl border border-gray-800">
+                    <span class="material-symbols-outlined text-[var(--accent-primary)] mt-1">login</span>
+                    <p class="text-gray-300">Automatically logs into the college portal</p>
+                </div>
+                <div class="flex items-start gap-3 bg-black/20 p-4 rounded-xl border border-gray-800">
+                    <span class="material-symbols-outlined text-[var(--accent-primary)] mt-1">analytics</span>
+                    <p class="text-gray-300">Tracks attendance using <strong>baseline comparison logic</strong></p>
+                </div>
+                <div class="flex items-start gap-3 bg-black/20 p-4 rounded-xl border border-gray-800">
+                    <span class="material-symbols-outlined text-[var(--accent-primary)] mt-1">chat</span>
+                    <p class="text-gray-300">Sends a <strong>clean Daily Tracker message</strong> directly to Telegram</p>
+                </div>
+                <div class="flex items-start gap-3 bg-black/20 p-4 rounded-xl border border-gray-800">
+                    <span class="material-symbols-outlined text-[var(--accent-primary)] mt-1">update</span>
+                    <p class="text-gray-300">Updates attendance information automatically throughout the day</p>
+                </div>
+                <div class="flex items-start gap-3 bg-black/20 p-4 rounded-xl border border-gray-800 md:col-span-2">
+                    <span class="material-symbols-outlined text-[var(--accent-primary)] mt-1">block</span>
+                    <p class="text-gray-300">Avoids manual attendance checking completely</p>
+                </div>
+            </div>
+            <p class="mt-8 text-gray-400 italic">This project is designed to demonstrate practical automation skills, API integration, and workflow automation suitable for college projects and portfolios.</p>
+        </section>
+
+        <section class="glass-card relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-[var(--accent-primary)] rounded-full mix-blend-screen filter blur-[100px] opacity-10 pointer-events-none"></div>
+            
+            <h2 class="text-3xl font-bold mb-8 flex items-center gap-3 relative z-10">
+                <span class="material-symbols-outlined text-4xl text-[var(--accent-primary)]">psychology</span>
+                Smart Attendance Logic
+            </h2>
+            <p class="text-gray-400 text-lg mb-8 relative z-10">Unlike basic trackers, this bot uses <strong>Baseline Comparison Logic</strong>.</p>
+            
+            <div class="grid md:grid-cols-3 gap-6 relative z-10">
+                <div class="bg-black/30 p-6 rounded-2xl border border-gray-800">
+                    <h3 class="text-xl font-bold text-white mb-3">Morning Reset</h3>
+                    <p class="text-gray-400">Every morning, the bot captures your <strong>current portal attendance counts</strong> and stores them as the <strong>Baseline</strong>.</p>
+                </div>
+                <div class="bg-black/30 p-6 rounded-2xl border border-[var(--accent-primary)]/30">
+                    <h3 class="text-xl font-bold text-white mb-3">Today's Stats</h3>
+                    <p class="text-gray-400 mb-4">It calculates:</p>
+                    <code class="block text-center text-lg py-2 bg-[var(--accent-primary)]/10">Current Count - Morning Baseline</code>
+                    <p class="text-gray-400 mt-4 text-sm">This ensures the bot shows <strong>exactly how many classes were held today</strong>, instead of relying on raw totals.</p>
+                </div>
+                <div class="bg-black/30 p-6 rounded-2xl border border-gray-800">
+                    <h3 class="text-xl font-bold text-white mb-3">Dynamic Messaging</h3>
+                    <p class="text-gray-400 mb-2">Instead of sending multiple messages:</p>
+                    <ul class="text-sm text-gray-400 space-y-2">
+                        <li>• The bot <strong>deletes the previous message</strong></li>
+                        <li>• Sends a <strong>fresh Daily Tracker message</strong></li>
+                        <li>• This keeps your Telegram chat <strong>clean while still triggering notifications</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="setup" class="glass-card border-l-4 border-l-[var(--accent-primary)]">
+            <h2 class="text-4xl font-extrabold mb-10 text-white">🚀 Setup Guide</h2>
+            
+            <h3 class="text-2xl font-bold mb-6 text-[var(--accent-primary)]">Phase 1: Basic Setup (Mandatory)</h3>
+            
+            <div class="mb-10">
+                <h4 class="text-xl font-bold text-white mb-3"><span class="step-badge">1</span> Fork the Repository</h4>
+                <p class="text-gray-400 ml-11">Click <strong>Fork</strong> (top-right of the GitHub page) to create your personal copy of the repository.</p>
+            </div>
+
+            <div class="mb-10">
+                <h4 class="text-xl font-bold text-white mb-3"><span class="step-badge">2</span> Configure GitHub Secrets</h4>
+                <p class="text-gray-400 ml-11 mb-4">Sensitive credentials are securely stored using <strong>GitHub Secrets</strong> so the bot can log into the portal automatically.</p>
+                
+                <div class="ml-11 bg-black/20 p-6 rounded-2xl border border-gray-800 mb-6">
+                    <h5 class="font-bold text-white mb-3 uppercase tracking-wider text-sm">Navigation</h5>
+                    <ol class="list-decimal ml-5 text-gray-400 space-y-1">
+                        <li>Open your <strong>forked repository</strong></li>
+                        <li>Go to <strong>Settings</strong></li>
+                        <li>Click <strong>Secrets and variables → Actions</strong></li>
+                        <li>Click <strong>New repository secret</strong></li>
+                    </ol>
+                </div>
+
+                <div class="ml-11 overflow-x-auto">
+                    <h5 class="font-bold text-white mb-3 uppercase tracking-wider text-sm">Required Secrets</h5>
+                    <table>
+                        <thead>
+                            <tr><th>Secret Name</th><th>Value</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>USER_ID</code></td><td>Your college portal username / roll number</td></tr>
+                            <tr><td><code>PASSWORD</code></td><td>Your college portal password</td></tr>
+			    <tr><td><code>BASE_URL</code></td><td><span class="text-[var(--accent-primary)] font-bold">(Optional)</span> Your college portal link (e.g., <code>https://arms.sse.saveetha.com</code>). Defaults to SMC - for Saveetha Medical College if left blank.</td></tr>
+                            <tr><td><code>BOT_TOKEN</code></td><td>Token from <strong>@BotFather</strong> on Telegram</td></tr>
+                            <tr><td><code>CHAT_ID</code></td><td>Your ID from <strong>@userinfobot</strong> on Telegram</td></tr>
+                            <tr><td><code>GH_PAT</code></td><td>A GitHub Personal Access Token (Classic) with <strong>workflow scope</strong></td></tr>
+                            <tr><td><code>REPO_FULL_NAME</code></td><td>Your GitHub repository path (example: <code>username/attendancereporter</code>)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="mt-12 pt-8 border-t border-gray-800">
+                <h3 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                    <span class="material-symbols-outlined text-[var(--accent-primary)] text-3xl">database</span>
+                    Initialize Attendance Memory
+                </h3>
+                <p class="text-gray-400 mb-4">Edit the file <strong><code>last_attendance.txt</code></strong> in your repository and set it to:</p>
+                <pre><code>0,0,None,01-01-2000</code></pre>
+                
+                <h5 class="font-bold text-white mt-6 mb-3 text-lg">What this means</h5>
+                <ul class="space-y-3 text-gray-400">
+                    <li class="flex items-center gap-3"><code class="bg-transparent border border-gray-700">0,0</code> Initial counts for total and attended classes</li>
+                    <li class="flex items-center gap-3"><code class="bg-transparent border border-gray-700">None</code> No Telegram message created yet</li>
+                    <li class="flex items-center gap-3"><code class="bg-transparent border border-gray-700">01-01-2000</code> Forces a fresh Daily Tracker message on the first run</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="glass-card">
+            <h3 class="text-3xl font-bold mb-4 text-white flex items-center gap-3">
+                <span class="material-symbols-outlined text-3xl">sync</span>
+                Phase 2: "Refresh Now" Button <span class="text-gray-500 font-normal text-xl">(Optional)</span>
+            </h3>
+            <p class="text-gray-400 text-lg mb-8">
+                The <strong>Refresh Now</strong> button allows you to trigger an attendance check instantly from Telegram. Since <strong>GitHub Actions cannot listen to Telegram button clicks</strong>, a <strong>listener service</strong> is required.
+            </p>
+
+            <h4 class="text-2xl font-bold mb-6 text-[var(--accent-primary)]">🛠️ Cloudflare Worker Setup (The Listener)</h4>
+
+            <div class="space-y-8">
+                <div>
+                    <h5 class="text-xl font-bold text-white mb-2"><span class="step-badge">1</span> Create Worker</h5>
+                    <ol class="list-decimal ml-11 text-gray-400">
+                        <li>Log in to <strong>Cloudflare</strong></li>
+                        <li>Navigate to <strong>Workers & Pages</strong></li>
+                        <li>Click <strong>Create application</strong></li>
+                        <li>Select <strong>Create Worker</strong></li>
+                    </ol>
+                </div>
+
+                <div>
+                    <h5 class="text-xl font-bold text-white mb-2"><span class="step-badge">2</span> Deploy Worker</h5>
+                    <ul class="list-disc ml-11 text-gray-400">
+                        <li>Click <strong>Deploy</strong></li>
+                        <li>After deployment, click <strong>Edit Code</strong></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="text-xl font-bold text-white mb-2"><span class="step-badge">3</span> Paste Worker Code</h5>
+                    <p class="text-gray-400 ml-11">Replace everything inside <strong>worker.js</strong> with the <strong>Webhook script provided during setup</strong>.</p>
+                </div>
+
+                <div>
+                    <h5 class="text-xl font-bold text-white mb-2"><span class="step-badge">4</span> Add Environment Variables</h5>
+                    <p class="text-gray-400 ml-11 mb-4">Go to: <code class="bg-transparent border border-gray-700 text-white">Worker Settings → Variables → Environment Variables</code></p>
+                    <div class="ml-11 overflow-x-auto">
+                        <table>
+                            <thead>
+                                <tr><th>Variable</th><th>Value</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><code>BOT_TOKEN</code></td><td>Same Telegram bot token used in GitHub</td></tr>
+                                <tr><td><code>GH_PAT</code></td><td>Same GitHub Personal Access Token</td></tr>
+                                <tr><td><code>REPO_FULL_NAME</code></td><td>Same repository path</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div>
+                    <h5 class="text-xl font-bold text-white mb-2"><span class="step-badge">5</span> Activate Telegram Webhook</h5>
+                    <p class="text-gray-400 ml-11 mb-4">Copy your <strong>Worker URL</strong> and open this link in your browser:</p>
+                    <div class="ml-11">
+                        <pre><code>https://api.telegram.org/bot&lt;YOUR_BOT_TOKEN&gt;/setWebhook?url=&lt;YOUR_WORKER_URL&gt;</code></pre>
+                        <p class="text-gray-500 text-sm mt-3">Replace <code>&lt;YOUR_BOT_TOKEN&gt;</code> with your BOT Token from Telegram Bot Father<br>Replace <code>&lt;YOUR_WORKER_URL&gt;</code> with your worker url from Cloudflare</p>
+                        <p class="text-[var(--accent-primary)] mt-3 font-medium">This connects your Telegram bot to the Cloudflare listener.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="note-box">
+                <h5 class="text-lg font-bold text-yellow-500 mb-2 flex items-center gap-2">
+                    <span class="material-symbols-outlined">warning</span> NOTE: Don't want to use Cloudflare?
+                </h5>
+                <p class="text-yellow-500/80">
+                    If you skip Phase 2, the bot will still run automatically <strong>3 times a day</strong>. However, do <strong>not click the "Refresh Now" button</strong> in Telegram because GitHub Actions cannot process the request without the listener.
+                </p>
+            </div>
+        </section>
+
+        <div class="grid md:grid-cols-2 gap-8 mb-20">
+            <section class="glass-card mb-0">
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                    <span class="material-symbols-outlined text-3xl text-[var(--accent-primary)]">schedule</span>
+                    Automation Schedule
+                </h2>
+                <p class="text-gray-400 mb-6">The bot runs automatically through <strong>GitHub Actions workflows</strong> at the following times:</p>
+                <ul class="space-y-4 text-gray-300">
+                    <li class="flex items-center gap-3"><span class="font-bold text-[var(--accent-primary)] bg-[var(--accent-primary)]/10 px-3 py-1 rounded">09:00 AM IST</span> → Morning Baseline</li>
+                    <li class="flex items-center gap-3"><span class="font-bold text-[var(--accent-primary)] bg-[var(--accent-primary)]/10 px-3 py-1 rounded">11:00 AM IST</span> → Mid-day Update</li>
+                    <li class="flex items-center gap-3"><span class="font-bold text-[var(--accent-primary)] bg-[var(--accent-primary)]/10 px-3 py-1 rounded">02:00 PM IST</span> → Afternoon Summary</li>
+                </ul>
+                <p class="text-gray-400 mt-6 italic">These scheduled runs keep your <strong>Daily Tracker updated throughout the day</strong>.</p>
+            </section>
+
+            <section class="glass-card mb-0">
+                <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                    <span class="material-symbols-outlined text-3xl text-[var(--accent-primary)]">help</span>
+                    FAQ
+                </h2>
+                <div class="space-y-6">
+                    <div>
+                        <h4 class="font-bold text-white mb-1">Is my password safe?</h4>
+                        <p class="text-gray-400 text-sm">Yes. Your credentials are stored securely inside <strong>GitHub Secrets</strong> and never printed in logs.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-white mb-1">What if I have a holiday?</h4>
+                        <p class="text-gray-400 text-sm">The bot will detect <strong>0 new classes</strong> and update the message accordingly with <em>0 classes held today</em>.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-white mb-1">Can I run it manually?</h4>
+                        <p class="text-gray-400 text-sm">Yes. Go to the <strong>Actions tab</strong> in your GitHub repository and click <strong>Run workflow</strong>.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <footer class="text-center pt-16 border-t border-gray-800">
+            <h2 class="text-3xl font-bold mb-8 text-white">Tech Stack & Resume Value</h2>
+            
+            <div class="flex flex-wrap justify-center gap-4 mb-10">
+                <span class="text-3xl font-bold stroke-text hover:text-[var(--accent-primary)] transition-colors cursor-default">PYTHON</span>
+                <span class="text-3xl font-bold stroke-text hover:text-[var(--accent-primary)] transition-colors cursor-default">GITHUB ACTIONS</span>
+                <span class="text-3xl font-bold stroke-text hover:text-[var(--accent-primary)] transition-colors cursor-default">TELEGRAM BOT API</span>
+                <span class="text-3xl font-bold stroke-text hover:text-[var(--accent-primary)] transition-colors cursor-default">CLOUDFLARE WORKERS</span>
+            </div>
+
+            <div class="max-w-3xl mx-auto text-left mb-12">
+                <h3 class="text-xl font-bold text-white mb-4 text-center">Skills Demonstrated</h3>
+                <div class="flex flex-wrap justify-center gap-3">
+                    <span class="skill-tag">Automation scripting</span>
+                    <span class="skill-tag">Secure credential handling</span>
+                    <span class="skill-tag">Scheduled workflows</span>
+                    <span class="skill-tag">API integration</span>
+                    <span class="skill-tag">Cloud automation pipelines</span>
+                </div>
+                <p class="text-[var(--accent-primary)] font-bold text-center mt-6 text-lg">Ideal for college projects, resumes, and internship portfolios.</p>
+            </div>
+
+            <p class="text-gray-600 text-sm pb-8">Built for educational purposes to demonstrate Python automation and API integration.</p>
+        </footer>
+
+    </main>
+
+</body>
+</html>
