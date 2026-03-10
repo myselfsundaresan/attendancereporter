@@ -934,6 +934,7 @@
 🔹 Recent Advances in Mol..: 4/4 <span style="color:#4cd964;font-weight:600">(100.0%)</span>
 🔹 Library Hour: 17/19 <span style="color:#f0a500;font-weight:600">(89.47%)</span>
 <span style="color:#3a5068">━━━━━━━━━━━━━━━━━━━━━</span>
+📈 <b>Total Overall: 35/37 <span style="color:#4cd964">(94.59%)</span></b>
               <span class="msg-time">14:00 ✓✓</span>
             </div>
           </div>
@@ -958,8 +959,9 @@
       <div class="setup-nav reveal">
         <div class="nav-guide">Navigate to <strong>Settings → Secrets and variables → Actions</strong> in your GitHub repo to add all credentials.</div>
         <a href="#step1" class="nav-item active"><span class="nav-num">01</span> Fork Repository</a>
-        <a href="#step2" class="nav-item"><span class="nav-num">02</span> GitHub Secrets</a>
-        <a href="#step3" class="nav-item"><span class="nav-num">03</span> Initialize JSON</a>
+        <a href="#step2" class="nav-item"><span class="nav-num">02</span> Create Telegram Bot</a>
+        <a href="#step3" class="nav-item"><span class="nav-num">03</span> GitHub Secrets</a>
+        <a href="#step4" class="nav-item"><span class="nav-num">04</span> Initialize JSON</a>
       </div>
 
       <div class="setup-steps">
@@ -976,6 +978,89 @@
         <div class="setup-step reveal" id="step2">
           <div class="step-header">
             <div class="step-badge">2</div>
+            <div class="step-title-h">Create Your Telegram Bot</div>
+          </div>
+          <div class="step-content">
+            <p>You need a Telegram Bot Token (<code>BOT_TOKEN</code>) and your personal Chat ID (<code>CHAT_ID</code>) before filling in GitHub Secrets. Follow these steps carefully.</p>
+
+            <div style="margin-top:1.5rem">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--fire);margin-bottom:1rem">Part A — Get Your BOT_TOKEN from @BotFather</div>
+              <div style="display:flex;flex-direction:column;gap:0.9rem">
+
+                <div style="display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.2rem;background:var(--bg1);border:1px solid var(--line);border-radius:8px">
+                  <div style="min-width:1.6rem;height:1.6rem;background:var(--fire);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0">1</div>
+                  <div>
+                    <div style="font-weight:600;font-size:0.9rem;margin-bottom:0.25rem">Open Telegram and search for BotFather</div>
+                    <div style="font-size:0.82rem;color:var(--dim)">Search <code>@BotFather</code> in the Telegram search bar. It's the <strong style="color:var(--text)">official verified bot</strong> with a blue checkmark ✓. Tap on it and press <strong style="color:var(--text)">Start</strong>.</div>
+                  </div>
+                </div>
+
+                <div style="display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.2rem;background:var(--bg1);border:1px solid var(--line);border-radius:8px">
+                  <div style="min-width:1.6rem;height:1.6rem;background:var(--fire);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0">2</div>
+                  <div>
+                    <div style="font-weight:600;font-size:0.9rem;margin-bottom:0.25rem">Send the /newbot command</div>
+                    <div style="font-size:0.82rem;color:var(--dim)">Type and send <code>/newbot</code>. BotFather will ask you to choose a <strong style="color:var(--text)">display name</strong> for your bot — this is what users see (e.g. <em>My Attendance Bot</em>).</div>
+                  </div>
+                </div>
+
+                <div style="display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.2rem;background:var(--bg1);border:1px solid var(--line);border-radius:8px">
+                  <div style="min-width:1.6rem;height:1.6rem;background:var(--fire);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0">3</div>
+                  <div>
+                    <div style="font-weight:600;font-size:0.9rem;margin-bottom:0.25rem">Choose a username</div>
+                    <div style="font-size:0.82rem;color:var(--dim)">BotFather will then ask for a <strong style="color:var(--text)">username</strong>. It must be unique and end with <code>bot</code> (e.g. <em>my_attendance_bot</em> or <em>SaveethaTrackerBot</em>).</div>
+                  </div>
+                </div>
+
+                <div style="display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.2rem;background:rgba(255,69,0,0.04);border:1px solid rgba(255,69,0,0.25);border-radius:8px">
+                  <div style="min-width:1.6rem;height:1.6rem;background:var(--fire);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0">4</div>
+                  <div>
+                    <div style="font-weight:600;font-size:0.9rem;margin-bottom:0.25rem">Copy your Bot Token</div>
+                    <div style="font-size:0.82rem;color:var(--dim)">BotFather will reply with a message containing your token. It looks like:<br><br>
+                    <code style="display:block;margin-top:0.4rem;font-size:0.78rem;line-height:1.6">7123456789:AAFxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code><br>
+                    Copy this entire string. This is your <code>BOT_TOKEN</code>. <strong style="color:var(--fire)">Never share it publicly.</strong></div>
+                  </div>
+                </div>
+
+                <div style="display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.2rem;background:var(--bg1);border:1px solid var(--line);border-radius:8px">
+                  <div style="min-width:1.6rem;height:1.6rem;background:var(--fire);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0">5</div>
+                  <div>
+                    <div style="font-weight:600;font-size:0.9rem;margin-bottom:0.25rem">Start a chat with your new bot</div>
+                    <div style="font-size:0.82rem;color:var(--dim)">Search your bot's username in Telegram and press <strong style="color:var(--text)">Start</strong>. This is required — the bot cannot send you messages until you initiate a conversation.</div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div style="margin-top:2rem">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--fire);margin-bottom:1rem">Part B — Get Your CHAT_ID from @userinfobot</div>
+              <div style="display:flex;flex-direction:column;gap:0.9rem">
+
+                <div style="display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.2rem;background:var(--bg1);border:1px solid var(--line);border-radius:8px">
+                  <div style="min-width:1.6rem;height:1.6rem;background:#22c55e;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0">1</div>
+                  <div>
+                    <div style="font-weight:600;font-size:0.9rem;margin-bottom:0.25rem">Search for @userinfobot</div>
+                    <div style="font-size:0.82rem;color:var(--dim)">In Telegram, search <code>@userinfobot</code> and press <strong style="color:var(--text)">Start</strong>.</div>
+                  </div>
+                </div>
+
+                <div style="display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.2rem;background:rgba(34,197,94,0.04);border:1px solid rgba(34,197,94,0.2);border-radius:8px">
+                  <div style="min-width:1.6rem;height:1.6rem;background:#22c55e;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0">2</div>
+                  <div>
+                    <div style="font-weight:600;font-size:0.9rem;margin-bottom:0.25rem">Copy your ID</div>
+                    <div style="font-size:0.82rem;color:var(--dim)">The bot will instantly reply with your details. Copy the number next to <strong style="color:var(--text)">Id:</strong> — that is your <code>CHAT_ID</code>.<br><br>
+                    <code style="display:block;margin-top:0.4rem;font-size:0.78rem;line-height:1.8">Id: 987654321<br>First: Your Name<br>Username: @yourhandle</code></div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="setup-step reveal" id="step3">
+          <div class="step-header">
+            <div class="step-badge">3</div>
             <div class="step-title-h">Configure GitHub Secrets</div>
           </div>
           <div class="step-content">
@@ -986,8 +1071,8 @@
                 <tr><td><code>USER_ID</code></td><td>Your portal username / roll number</td></tr>
                 <tr><td><code>PASSWORD</code></td><td>Your portal password</td></tr>
                 <tr><td><code>BASE_URL</code></td><td><span class="badge-opt">Optional</span> Portal URL (e.g. <code>https://arms.sse.saveetha.com</code>). Defaults to SMC if blank.</td></tr>
-                <tr><td><code>BOT_TOKEN</code></td><td>Token from <strong>@BotFather</strong> on Telegram</td></tr>
-                <tr><td><code>CHAT_ID</code></td><td>Your ID from <strong>@userinfobot</strong> on Telegram</td></tr>
+                <tr><td><code>BOT_TOKEN</code></td><td>Token copied from <strong>@BotFather</strong> (Step 2A above)</td></tr>
+                <tr><td><code>CHAT_ID</code></td><td>Your ID copied from <strong>@userinfobot</strong> (Step 2B above)</td></tr>
                 <tr><td><code>GH_PAT</code></td><td>GitHub Personal Access Token (Classic) with <strong>workflow</strong> scope</td></tr>
                 <tr><td><code>REPO_FULL_NAME</code></td><td>Your repository path — e.g. <code>username/attendancereporter</code></td></tr>
               </tbody>
@@ -995,9 +1080,9 @@
           </div>
         </div>
 
-        <div class="setup-step reveal" id="step3">
+        <div class="setup-step reveal" id="step4">
           <div class="step-header">
-            <div class="step-badge green">3</div>
+            <div class="step-badge green">4</div>
             <div class="step-title-h">Initialize JSON Memory</div>
           </div>
           <div class="step-content">
@@ -1137,7 +1222,7 @@
   reveals.forEach(el => observer.observe(el));
 
   // Active nav
-  const steps = ['step1','step2','step3'];
+  const steps = ['step1','step2','step3','step4'];
   const navItems = document.querySelectorAll('.nav-item');
   window.addEventListener('scroll', () => {
     steps.forEach((id, i) => {
