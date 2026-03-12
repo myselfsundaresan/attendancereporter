@@ -4,942 +4,510 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Saveetha Attendance Bot Pro | Documentation</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
 
 <style>
-  :root {
-    --fire: #FF4500;
-    --fire-dim: #cc3700;
-    --fire-glow: rgba(255,69,0,0.25);
-    --gold: #F5A623;
-    --bg: #080808;
-    --bg1: #0f0f0f;
-    --bg2: #161616;
-    --bg3: #1e1e1e;
-    --line: rgba(255,255,255,0.06);
-    --text: #f0ece6;
-    --muted: #666;
-    --dim: #999;
-  }
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    font-family: 'Outfit', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    overflow-x: hidden;
-    line-height: 1.65;
-  }
-
-  /* Noise overlay */
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
-    opacity: 0.025;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* ─── HERO ─── */
-  .hero {
-    min-height: 100svh;
-    display: grid;
-    place-items: center;
-    text-align: center;
-    padding: 6rem 2rem 4rem;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero-bg {
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(255,69,0,0.18) 0%, transparent 70%),
-      radial-gradient(ellipse 40% 40% at 80% 80%, rgba(245,166,35,0.06) 0%, transparent 60%);
-  }
-
-  .hero-grid {
-    position: absolute; inset: 0;
-    background-image:
-      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-    background-size: 64px 64px;
-    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
-  }
-
-  .hero-content { position: relative; z-index: 1; max-width: 860px; }
-
-  .hero-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    border: 1px solid rgba(255,69,0,0.35);
-    background: rgba(255,69,0,0.06);
-    color: var(--fire);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    padding: 0.45rem 1.1rem;
-    border-radius: 100px;
-    margin-bottom: 2rem;
-    backdrop-filter: blur(8px);
-  }
-  .hero-eyebrow::before { content: ''; width: 6px; height: 6px; background: var(--fire); border-radius: 50%; animation: pulse-dot 2s ease infinite; }
-  @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
-
-  .hero-title {
-    font-family: 'Outfit', sans-serif;
-    font-size: clamp(3.2rem, 8vw, 7rem);
-    font-weight: 800;
-    line-height: 0.95;
-    letter-spacing: -0.03em;
-    margin-bottom: 2rem;
-  }
-  .hero-title .line1 { display: block; color: var(--text); }
-  .hero-title .line2 {
-    display: block;
-    background: linear-gradient(135deg, var(--fire) 0%, var(--gold) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .hero-sub {
-    font-size: 1.1rem;
-    color: var(--dim);
-    max-width: 580px;
-    margin: 0 auto 3rem;
-    font-weight: 300;
-  }
-
-  .hero-cta {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: var(--fire);
-    color: #fff;
-    font-family: 'Outfit', sans-serif;
-    font-weight: 700;
-    font-size: 0.9rem;
-    letter-spacing: 0.05em;
-    padding: 0.85rem 2.2rem;
-    border-radius: 6px;
-    text-decoration: none;
-    border: none;
+/* ═══════════════════════════════════════════════
+   ULTRA-PREMIUM TOKENS (DARK MODE DEFAULT)
+═══════════════════════════════════════════════ */
+:root {
+  /* Core Colors (Matched to Portfolio) */
+  --accent: #E07828;
+  --accent-light: #F09444;
+  --accent-alpha: rgba(224, 120, 40, 0.15);
+  
+  /* Dark Theme Default */
+  --bg-base: #020305;
+  --text-primary: #f5f6f8;
+  --text-secondary: #a1a8b5;
+  --text-muted: #606675;
+  
+  /* Dark Material Glass */
+  --glass-bg: rgba(15, 17, 23, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass-highlight: rgba(255, 255, 255, 0.12);
+  --glass-shadow: 
+    0 30px 60px -15px rgba(0, 0, 0, 0.6), 
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.5),
+    inset 1px 0 1px rgba(255, 255, 255, 0.05);
     
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .btn-primary::after {
-    content: '';
-    position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
-    pointer-events: none;
-  }
-  .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 40px rgba(255,69,0,0.45);
-  }
-
-  .btn-ghost {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--dim);
-    font-family: 'Outfit', sans-serif;
-    font-weight: 600;
-    font-size: 0.9rem;
-    letter-spacing: 0.05em;
-    padding: 0.85rem 2rem;
-    border-radius: 6px;
-    text-decoration: none;
-    border: 1px solid var(--line);
-    background: rgba(255,255,255,0.02);
-    transition: all 0.25s;
-    
-    backdrop-filter: blur(8px);
-  }
-  .btn-ghost:hover {
-    border-color: rgba(255,255,255,0.15);
-    color: var(--text);
-    background: rgba(255,255,255,0.04);
-  }
-
-  /* ─── SCROLLING TICKER ─── */
-  .ticker-wrap {
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-    background: var(--bg1);
-    overflow: hidden;
-    padding: 0.9rem 0;
-    position: relative;
-    z-index: 2;
-  }
-  .ticker-track {
-    display: flex;
-    gap: 0;
-    white-space: nowrap;
-    animation: ticker 30s linear infinite;
-  }
-  .ticker-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 2rem;
-    padding: 0 3rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  .ticker-item .dot { width: 4px; height: 4px; background: var(--fire); border-radius: 50%; }
-  @keyframes ticker {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-  }
-
-  /* ─── LAYOUT ─── */
-  .container {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 2rem;
-  }
-
-  /* ─── SECTION LABELS ─── */
-  .section-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--fire);
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-  }
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--line);
-    max-width: 80px;
-  }
-
-  .section-title {
-    font-family: 'Outfit', sans-serif;
-    font-size: clamp(2rem, 4vw, 3.2rem);
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    line-height: 1.05;
-    margin-bottom: 1.5rem;
-  }
-
-  /* ─── FEATURES SECTION ─── */
-  .features-section {
-    padding: 8rem 0;
-    position: relative;
-  }
-
-  .features-header {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: end;
-    margin-bottom: 5rem;
-  }
-  @media(max-width:700px){ .features-header{grid-template-columns:1fr;gap:1.5rem} }
-
-  .features-desc { color: var(--dim); font-size: 1rem; font-weight: 300; max-width: 380px; }
-
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5px;
-    background: var(--line);
-    border: 1px solid var(--line);
-  }
-  @media(max-width:600px){ .features-grid{grid-template-columns:1fr} }
-
-  .feature-cell {
-    background: var(--bg);
-    padding: 2.5rem;
-    position: relative;
-    overflow: hidden;
-    transition: background 0.3s;
-  }
-  .feature-cell::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 2px;
-    background: var(--fire);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.4s cubic-bezier(0.2,1,0.3,1);
-  }
-  .feature-cell:hover::before { transform: scaleX(1); }
-  .feature-cell:hover { background: var(--bg1); }
-
-  .feature-icon {
-    width: 2.5rem; height: 2.5rem;
-    margin-bottom: 1.5rem;
-    color: var(--fire);
-    opacity: 0.8;
-  }
-
-  .feature-name {
-    font-family: 'Outfit', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 0.7rem;
-    letter-spacing: -0.01em;
-  }
-
-  .feature-desc { font-size: 0.875rem; color: var(--dim); line-height: 1.7; }
-
-  /* ─── LOGIC SECTION ─── */
-  .logic-section {
-    padding: 8rem 0;
-    background: var(--bg1);
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-    position: relative;
-    overflow: hidden;
-  }
-  .logic-section::before {
-    content: '';
-    position: absolute;
-    top: -200px; right: -200px;
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(255,69,0,0.06) 0%, transparent 70%);
-    pointer-events: none;
-  }
-
-  .logic-inner {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 5rem;
-    align-items: start;
-  }
-  @media(max-width:800px){ .logic-inner{grid-template-columns:1fr;gap:3rem} }
-
-  .logic-steps { display: flex; flex-direction: column; gap: 0; }
-
-  .logic-step {
-    display: flex;
-    gap: 1.8rem;
-    padding: 2rem 0;
-    border-bottom: 1px solid var(--line);
-    position: relative;
-  }
-  .logic-step:last-child { border-bottom: none; }
-
-  .step-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem;
-    color: var(--fire);
-    letter-spacing: 0.1em;
-    padding-top: 0.2rem;
-    min-width: 2rem;
-  }
-
-  .step-body {}
-  .step-title {
-    font-family: 'Outfit', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-    letter-spacing: -0.01em;
-  }
-  .step-desc { font-size: 0.85rem; color: var(--dim); line-height: 1.7; }
-
-  /* Telegram mockup */
-  .tg-phone {
-    position: relative;
-    background: #0e1620;
-    border-radius: 24px;
-    border: 1px solid rgba(255,255,255,0.08);
-    overflow: hidden;
-    box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
-  }
-
-  .tg-topbar {
-    background: #17212b;
-    padding: 1rem 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-  }
-
-  .tg-avatar {
-    width: 36px; height: 36px;
-    background: linear-gradient(135deg, var(--fire), var(--gold));
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 800; font-size: 0.8rem; color: white; font-family: 'Outfit', sans-serif;
-  }
-
-  .tg-name { font-weight: 600; font-size: 0.9rem; color: #e4ebf5; }
-  .tg-status { font-size: 0.7rem; color: #629de8; }
-
-  .tg-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 0.8rem; }
-
-  .tg-msg {
-    background: #1e2d3d;
-    border-radius: 4px 16px 16px 16px;
-    padding: 1rem 1.2rem;
-    font-size: 0.82rem;
-    line-height: 1.65;
-    color: #c5d4e3;
-    font-family: -apple-system, system-ui, sans-serif;
-    border-left: 3px solid var(--fire);
-    position: relative;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  }
-
-  .tg-msg .msg-time {
-    display: block;
-    text-align: right;
-    font-size: 0.65rem;
-    color: #546778;
-    margin-top: 0.5rem;
-  }
-
-  .tg-btn-row {
-    display: flex;
-    gap: 0.5rem;
-    padding: 0 1.5rem 1.5rem;
-  }
-  .tg-btn {
-    flex: 1;
-    background: #17212b;
-    border: 1px solid rgba(255,255,255,0.08);
-    color: #629de8;
-    font-size: 0.75rem;
-    padding: 0.6rem;
-    border-radius: 8px;
-    text-align: center;
-    
-    font-weight: 500;
-  }
-
-  code {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.82em;
-    background: rgba(255,69,0,0.1);
-    color: var(--fire);
-    padding: 0.15em 0.5em;
-    border-radius: 4px;
-    border: 1px solid rgba(255,69,0,0.2);
-  }
-
-  pre {
-    background: #060606;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 1.5rem;
-    overflow-x: auto;
-    margin: 1.5rem 0;
-    position: relative;
-  }
-  pre::before {
-    content: 'JSON';
-    position: absolute; top: 0.7rem; right: 1rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.15em;
-    color: var(--muted);
-  }
-  pre code {
-    background: none; color: #98c379; padding: 0;
-    border: none; font-size: 0.85rem;
-  }
-
-  /* ─── SETUP SECTION ─── */
-  .setup-section {
-    padding: 8rem 0;
-    position: relative;
-  }
-
-  .setup-inner {
-    display: grid;
-    grid-template-columns: 260px 1fr;
-    gap: 5rem;
-  }
-  @media(max-width:800px){ .setup-inner{grid-template-columns:1fr;gap:3rem} }
-
-  .setup-nav {
-    position: sticky;
-    top: 5rem;
-    height: fit-content;
-  }
-
-  .nav-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.9rem 0;
-    border-bottom: 1px solid var(--line);
-    color: var(--muted);
-    font-size: 0.85rem;
-    font-weight: 500;
-    transition: color 0.2s;
-    
-    text-decoration: none;
-  }
-  .nav-item:hover, .nav-item.active { color: var(--text); }
-  .nav-item.active .nav-num { color: var(--fire); }
-
-  .nav-num {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    min-width: 2ch;
-    transition: color 0.2s;
-  }
-
-  /* Steps */
-  .setup-steps { display: flex; flex-direction: column; gap: 4rem; }
-
-  .setup-step {}
-
-  .step-header {
-    display: flex;
-    align-items: center;
-    gap: 1.2rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .step-badge {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.4rem; height: 2.4rem;
-    background: var(--fire);
-    color: white;
-    font-family: 'Outfit', sans-serif;
-    font-weight: 800;
-    font-size: 0.9rem;
-    border-radius: 6px;
-    flex-shrink: 0;
-    box-shadow: 0 4px 16px rgba(255,69,0,0.3);
-  }
-  .step-badge.green { background: #22c55e; box-shadow: 0 4px 16px rgba(34,197,94,0.3); }
-
-  .step-title-h {
-    font-family: 'Outfit', sans-serif;
-    font-weight: 700;
-    font-size: 1.3rem;
-    letter-spacing: -0.02em;
-  }
-
-  .step-content {
-    padding-left: 3.6rem;
-  }
-
-  .step-content p {
-    color: var(--dim);
-    font-size: 0.9rem;
-    margin-bottom: 1.5rem;
-    line-height: 1.7;
-  }
-
-  /* Secrets table */
-  .secrets-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.85rem;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  .secrets-table thead tr {
-    background: var(--bg1);
-    border-bottom: 1px solid var(--line);
-  }
-  .secrets-table th {
-    padding: 0.9rem 1.2rem;
-    text-align: left;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--muted);
-    font-weight: 400;
-  }
-  .secrets-table td {
-    padding: 0.9rem 1.2rem;
-    border-bottom: 1px solid var(--line);
-    color: var(--dim);
-    line-height: 1.6;
-  }
-  .secrets-table tr:last-child td { border-bottom: none; }
-  .secrets-table tr:hover td { background: rgba(255,255,255,0.015); color: var(--text); }
-
-  .badge-opt {
-    display: inline-flex;
-    align-items: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    background: rgba(245,166,35,0.1);
-    color: var(--gold);
-    border: 1px solid rgba(245,166,35,0.25);
-    padding: 0.1rem 0.5rem;
-    border-radius: 4px;
-    margin-right: 0.5rem;
-  }
-
-  /* Nav note */
-  .nav-guide {
-    background: var(--bg1);
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    padding: 1rem 1.2rem;
-    font-size: 0.8rem;
-    color: var(--muted);
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
-  }
-  .nav-guide strong { color: var(--gold); }
-
-  /* ─── CLOUDFLARE SECTION ─── */
-  .cf-section {
-    padding: 8rem 0;
-    background: var(--bg1);
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-  }
-
-  .cf-inner {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 5rem;
-    align-items: start;
-  }
-  @media(max-width:800px){ .cf-inner{grid-template-columns:1fr;gap:3rem} }
-
-  .cf-steps { display: flex; flex-direction: column; gap: 2rem; }
-
-  .cf-step {
-    display: flex;
-    gap: 1.5rem;
-    padding: 1.5rem;
-    background: var(--bg);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    transition: border-color 0.25s, background 0.25s;
-  }
-  .cf-step:hover {
-    border-color: rgba(255,69,0,0.25);
-    background: rgba(255,69,0,0.02);
-  }
-
-  .cf-dot {
-    width: 1.8rem; height: 1.8rem;
-    background: rgba(255,69,0,0.1);
-    border: 1px solid rgba(255,69,0,0.3);
-    color: var(--fire);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
-    font-weight: 600;
-    flex-shrink: 0;
-    margin-top: 0.1rem;
-  }
-
-  .cf-step-title {
-    font-family: 'Outfit', sans-serif;
-    font-weight: 700;
-    font-size: 0.95rem;
-    margin-bottom: 0.4rem;
-    letter-spacing: -0.01em;
-  }
-  .cf-step-desc { font-size: 0.82rem; color: var(--dim); line-height: 1.65; }
-
-  .alert-box {
-    background: rgba(245,166,35,0.04);
-    border: 1px solid rgba(245,166,35,0.2);
-    border-radius: 8px;
-    padding: 1.5rem;
-    font-size: 0.85rem;
-    color: rgba(245,166,35,0.9);
-    line-height: 1.7;
-    margin-top: 2rem;
-  }
-  .alert-box strong { color: var(--gold); }
-
-  /* ─── SCHEDULE ─── */
-  .schedule-section { padding: 8rem 0; }
-
-  .two-col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    margin-top: 4rem;
-  }
-  @media(max-width:700px){ .two-col{grid-template-columns:1fr} }
-
-  .schedule-list { display: flex; flex-direction: column; gap: 1rem; }
-
-  .schedule-item {
-    display: grid;
-    grid-template-columns: 7rem 1fr;
-    align-items: center;
-    gap: 1.5rem;
-    padding: 1.2rem 1.5rem;
-    background: var(--bg1);
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    transition: border-color 0.25s;
-  }
-  .schedule-item:hover { border-color: rgba(255,69,0,0.25); }
-
-  .schedule-time {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.82rem;
-    color: var(--fire);
-    letter-spacing: 0.05em;
-    font-weight: 500;
-  }
-
-  .schedule-label {
-    font-size: 0.87rem;
-    color: var(--dim);
-    font-weight: 400;
-  }
-
-  /* FAQ */
-  .faq-list { display: flex; flex-direction: column; gap: 0; }
-  .faq-item {
-    padding: 1.5rem 0;
-    border-bottom: 1px solid var(--line);
-  }
-  .faq-item:last-child { border-bottom: none; }
-  .faq-q {
-    font-family: 'Outfit', sans-serif;
-    font-weight: 700;
-    font-size: 0.95rem;
-    margin-bottom: 0.5rem;
-    letter-spacing: -0.01em;
-  }
-  .faq-a { font-size: 0.85rem; color: var(--dim); line-height: 1.7; }
-
-  /* ─── FOOTER ─── */
-  footer {
-    border-top: 1px solid var(--line);
-    padding: 4rem 0;
-    text-align: center;
-  }
-
-  .footer-stack {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    margin-bottom: 3rem;
-  }
-
-  .stack-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    padding: 0.5rem 1rem;
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    transition: all 0.25s;
-  }
-  .stack-pill:hover { border-color: rgba(255,69,0,0.3); color: var(--fire); }
-  .stack-pill::before { content: '◆'; font-size: 0.5rem; color: var(--fire); opacity: 0.5; }
-
-  .footer-copy {
-    font-size: 0.78rem;
-    color: var(--muted);
-  }
-
-  /* ─── SCROLL ANIMATION ─── */
-  .reveal {
-    opacity: 0;
-    transform: translateY(28px);
-    transition: opacity 0.7s cubic-bezier(0.2,1,0.3,1), transform 0.7s cubic-bezier(0.2,1,0.3,1);
-  }
-  .reveal.visible {
-    opacity: 1;
-    transform: none;
-  }
-
-  /* divider */
-  .divider { height: 1px; background: var(--line); }
-
+  /* Dark Auroras */
+  --orb-1: rgba(224, 120, 40, 0.12);
+  --orb-2: rgba(60, 40, 160, 0.15);
+  --orb-3: rgba(180, 70, 40, 0.1);
+
+  /* Geometry */
+  --radius-sm: 16px;
+  --radius-md: 32px;
+  --radius-lg: 48px;
+  --radius-pill: 120px;
+  
+  /* Physics / Easing */
+  --ease-fluid: cubic-bezier(0.2, 0, 0, 1);
+  --ease-spring: cubic-bezier(0.25, 1.2, 0.3, 1);
+  --ease-material: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ═══════════════════════════════════════════════
+   GLOBAL & PERFORMANCE OPTIMIZATIONS
+═══════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; } 
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  line-height: 1.65;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  perspective: 1000px;
+}
+
+::selection { background: var(--accent); color: #fff; }
+a, button { text-decoration: none; color: inherit; border: none; background: none; outline: none; cursor: pointer; }
+
+.serif { font-family: 'Playfair Display', serif; }
+.mono { font-family: 'JetBrains Mono', monospace; }
+
+h1, h2, h3, h4 { line-height: 1.05; font-weight: 700; letter-spacing: -0.02em; }
+.grad-text {
+  background: linear-gradient(120deg, var(--accent), var(--accent-light), #ffd3b6);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-size: 200% auto; animation: shine 6s linear infinite;
+}
+@keyframes shine { to { background-position: 200% center; } }
+
+.eyebrow {
+  display: flex; align-items: center; gap: 0.8rem;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
+  text-transform: uppercase; letter-spacing: 0.25em; color: var(--accent); margin-bottom: 1.5rem; font-weight: 500;
+}
+.eyebrow::after { content: ''; flex: 1; height: 1px; background: var(--glass-border); max-width: 80px; }
+
+.container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+.section { padding: 8rem 0; position: relative; z-index: 10; }
+
+/* ═══════════════════════════════════════════════
+   HARDWARE-ACCELERATED AMBIENT ENGINE
+═══════════════════════════════════════════════ */
+.ambient-container { position: fixed; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; }
+.orb { 
+  position: absolute; border-radius: 50%; opacity: 0.9;
+  will-change: transform; transform: translate3d(0, 0, 0);
+  transition: transform 0.8s var(--ease-fluid);
+}
+.orb-1 { top: -20%; left: -10%; width: 60vw; height: 60vw; background: radial-gradient(circle, var(--orb-1) 0%, transparent 60%); }
+.orb-2 { bottom: -20%; right: -20%; width: 70vw; height: 70vw; background: radial-gradient(circle, var(--orb-2) 0%, transparent 60%); }
+.orb-3 { top: 30%; left: 30%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--orb-3) 0%, transparent 60%); }
+
+/* ═══════════════════════════════════════════════
+   ULTRA-GLASS & 3D MATERIAL ENGINE
+═══════════════════════════════════════════════ */
+.ultra-glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px) saturate(180%); -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: var(--radius-md);
+  isolation: isolate; 
+  position: relative; overflow: hidden;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.ultra-glass::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 2;
+  background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.08), transparent 40%);
+  opacity: 0; transition: opacity 0.4s var(--ease-material);
+}
+.ultra-glass:hover::after { opacity: 1; }
+
+/* ═══════════════════════════════════════════════
+   MATERIAL BUTTONS & TAGS
+═══════════════════════════════════════════════ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.75rem;
+  padding: 1rem 2.2rem; border-radius: var(--radius-pill); font-weight: 600; font-size: 0.95rem;
+  transition: transform 0.3s var(--ease-material), box-shadow 0.3s var(--ease-material), background 0.3s;
+  position: relative; will-change: transform;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+.btn svg {
+  display: block;
+}
+.btn:active { transform: scale(0.96) !important; } 
+
+.btn-primary { 
+  background: var(--accent); color: #fff; 
+  box-shadow: 0 12px 30px -8px rgba(224, 120, 40, 0.5), inset 0 2px 0 0 rgba(255,255,255,0.2); 
+}
+.btn-primary:hover { 
+  background: var(--accent-light); 
+  box-shadow: 0 20px 40px -10px rgba(224, 120, 40, 0.7), inset 0 2px 0 0 rgba(255,255,255,0.3); 
+}
+
+.btn-glass { border: 1px solid var(--glass-border); color: var(--text-primary); background: rgba(255,255,255,0.02); backdrop-filter: blur(10px); }
+.btn-glass:hover { background: rgba(255,255,255,0.1); border-color: var(--glass-highlight); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1); }
+
+.tag {
+  display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.5rem 1.2rem;
+  background: var(--accent-alpha); color: var(--accent); border: 1px solid rgba(224, 120, 40, 0.2);
+  border-radius: var(--radius-pill); font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+}
+.tag::before { content: ''; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse-dot 2s ease infinite; }
+@keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
+
+/* ═══════════════════════════════════════════════
+   HERO SECTION
+═══════════════════════════════════════════════ */
+.hero { min-height: 90vh; display: flex; align-items: center; justify-content: center; padding-top: 6rem; text-align: center; }
+.hero-content { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 2; }
+
+.hero-title { font-size: clamp(3.5rem, 8vw, 6.5rem); margin-bottom: 1.5rem; line-height: 1; }
+.hero-subtitle { font-size: clamp(1.1rem, 2.5vw, 1.3rem); color: var(--text-secondary); max-width: 650px; margin-bottom: 3.5rem; font-weight: 300; line-height: 1.8; }
+.hero-actions { display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center; }
+
+/* ═══════════════════════════════════════════════
+   TICKER
+═══════════════════════════════════════════════ */
+.ticker-wrap {
+  border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border);
+  background: rgba(0,0,0,0.2); backdrop-filter: blur(10px);
+  overflow: hidden; padding: 1rem 0; position: relative; z-index: 2;
+}
+.ticker-track { display: flex; white-space: nowrap; animation: ticker 40s linear infinite; }
+.ticker-track:hover { animation-play-state: paused; }
+.ticker-item {
+  display: inline-flex; align-items: center; gap: 2.5rem; padding: 0 3rem;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted);
+}
+.ticker-item .dot { width: 4px; height: 4px; background: var(--accent); border-radius: 50%; }
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ═══════════════════════════════════════════════
+   FEATURES GRID (BENTO STYLE)
+═══════════════════════════════════════════════ */
+.features-header { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: end; margin-bottom: 4rem; }
+@media(max-width:768px){ .features-header{grid-template-columns: 1fr; gap: 1.5rem;} }
+.features-desc { color: var(--text-secondary); font-size: 1.1rem; font-weight: 300; max-width: 400px; line-height: 1.7; }
+.section-title { font-size: clamp(2.5rem, 5vw, 4rem); }
+
+.bento-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+
+.bento-card { padding: 3rem; display: flex; flex-direction: column; justify-content: space-between; }
+.bento-icon {
+  width: 60px; height: 60px; border-radius: 50%; border: 1px solid var(--glass-border);
+  display: grid; place-items: center; margin-bottom: 2.5rem; color: var(--accent);
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+  box-shadow: inset 0 2px 10px rgba(255,255,255,0.1); transition: transform 0.5s var(--ease-spring);
+}
+.bento-card:hover .bento-icon { transform: scale(1.15) rotate(5deg); background: var(--accent-alpha); border-color: rgba(224, 120, 40, 0.4); }
+
+.bento-card h3 { font-size: 1.5rem; margin-bottom: 1rem; }
+.bento-card p { color: var(--text-secondary); font-size: 1rem; line-height: 1.7; }
+
+/* ═══════════════════════════════════════════════
+   LOGIC SECTION
+═══════════════════════════════════════════════ */
+.logic-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+@media(max-width:900px){ .logic-inner{grid-template-columns: 1fr; gap: 4rem;} }
+
+.logic-steps { display: flex; flex-direction: column; }
+.logic-step { display: flex; gap: 2rem; padding: 2.5rem 0; border-bottom: 1px solid var(--glass-border); }
+.logic-step:last-child { border-bottom: none; padding-bottom: 0; }
+
+.step-num { font-family: 'JetBrains Mono', monospace; font-size: 1rem; color: var(--accent); font-weight: 600; padding-top: 0.2rem; }
+.step-title { font-size: 1.3rem; margin-bottom: 0.75rem; }
+.step-desc { font-size: 1rem; color: var(--text-secondary); line-height: 1.7; }
+
+/* Telegram Mockup */
+.tg-phone { padding: 0; display: flex; flex-direction: column; background: #0e1621; border-color: rgba(255,255,255,0.1); }
+.tg-topbar { background: #17212b; padding: 1.2rem 1.5rem; display: flex; align-items: center; gap: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.tg-avatar {
+  width: 42px; height: 42px; background: linear-gradient(135deg, var(--accent), var(--accent-light));
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 1rem; color: white;
+}
+.tg-name { font-weight: 600; font-size: 1rem; color: #e4ebf5; }
+.tg-status { font-size: 0.8rem; color: #629de8; }
+.tg-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; background: #0e1621; }
+.tg-msg {
+  background: #1e2d3d; border-radius: 6px 18px 18px 18px; padding: 1.2rem;
+  font-size: 0.9rem; line-height: 1.7; color: #c5d4e3; font-family: -apple-system, sans-serif;
+  border-left: 4px solid var(--accent); box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+.tg-msg .msg-time { display: block; text-align: right; font-size: 0.7rem; color: #546778; margin-top: 0.8rem; }
+.tg-btn-row { padding: 0 1.5rem 1.5rem; background: #0e1621; }
+.tg-btn {
+  background: #17212b; border: 1px solid rgba(255,255,255,0.08); color: #629de8;
+  font-size: 0.85rem; padding: 0.8rem; border-radius: 10px; text-align: center; font-weight: 500;
+  transition: background 0.2s; cursor: pointer;
+}
+.tg-btn:hover { background: #1e2d3d; }
+
+/* ═══════════════════════════════════════════════
+   SETUP SECTION
+═══════════════════════════════════════════════ */
+.setup-inner { display: grid; grid-template-columns: 340px 1fr; gap: 5rem; align-items: start; }
+@media(max-width:900px){ .setup-inner{grid-template-columns: 1fr;} }
+
+.setup-nav { position: sticky; top: 1rem; }
+.nav-guide {
+  background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: var(--radius-sm);
+  padding: 1.5rem; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 2rem;
+}
+.nav-guide strong { color: var(--text-primary); font-weight: 600; }
+
+.nav-item {
+  display: flex; align-items: center; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--glass-border);
+  color: var(--text-muted); font-size: 1rem; font-weight: 500; transition: color 0.3s;
+}
+.nav-item:hover, .nav-item.active { color: var(--text-primary); }
+.nav-item.active .nav-num { color: var(--accent); }
+.nav-num { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; letter-spacing: 0.1em; color: var(--text-muted); transition: color 0.3s; }
+
+.setup-steps { display: flex; flex-direction: column; gap: 5rem; }
+.step-header { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem; }
+.step-badge {
+  width: 3rem; height: 3rem; background: var(--accent); color: white;
+  display: grid; place-items: center; font-weight: 800; font-size: 1.2rem; border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(224, 120, 40, 0.4); flex-shrink: 0;
+}
+.step-badge.green { background: #22c55e; box-shadow: 0 8px 20px rgba(34, 197, 94, 0.4); }
+.step-title-h { font-size: 1.8rem; }
+.step-content { padding-left: 4.5rem; }
+@media(max-width:600px){ .step-content { padding-left: 0; margin-top: 1.5rem; } }
+.step-content p { color: var(--text-secondary); font-size: 1.05rem; margin-bottom: 1.5rem; line-height: 1.8; }
+
+code {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+  background: rgba(255,255,255,0.05); color: var(--accent-light);
+  padding: 0.2em 0.5em; border-radius: 6px; border: 1px solid var(--glass-border);
+}
+
+pre {
+  background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); border-radius: var(--radius-sm);
+  padding: 2rem; overflow-x: auto; margin: 2rem 0; position: relative;
+}
+pre::before {
+  content: 'JSON'; position: absolute; top: 1rem; right: 1.5rem;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.15em; color: var(--text-muted);
+}
+pre code { background: none; color: #98c379; padding: 0; border: none; font-size: 0.95rem; }
+
+/* Secrets Table */
+.secrets-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--glass-border); }
+.secrets-table thead tr { background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--glass-border); }
+.secrets-table th { padding: 1.2rem; text-align: left; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); font-weight: 500; }
+.secrets-table td { padding: 1.2rem; border-bottom: 1px solid var(--glass-border); color: var(--text-secondary); line-height: 1.6; }
+.secrets-table tr:last-child td { border-bottom: none; }
+
+/* Setup micro-cards */
+.micro-card {
+  display: flex; gap: 1.5rem; align-items: flex-start; padding: 1.5rem;
+  background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 12px; margin-bottom: 1rem;
+}
+.micro-num {
+  min-width: 2rem; height: 2rem; background: var(--accent); color: white; border-radius: 50%;
+  display: grid; place-items: center; font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+}
+.micro-num.green { background: #22c55e; }
+.micro-title { font-weight: 600; font-size: 1.1rem; margin-bottom: 0.4rem; color: var(--text-primary); }
+
+/* ═══════════════════════════════════════════════
+   CLOUDFLARE SECTION
+═══════════════════════════════════════════════ */
+.cf-section { border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); }
+.cf-steps { display: flex; flex-direction: column; gap: 1.5rem; }
+.cf-step {
+  display: flex; gap: 1.5rem; padding: 2rem; align-items: center;
+}
+.cf-dot {
+  width: 2.5rem; height: 2.5rem; background: var(--accent-alpha); border: 1px solid rgba(224, 120, 40, 0.4);
+  color: var(--accent); border-radius: 50%; display: grid; place-items: center;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 600; flex-shrink: 0;
+}
+
+.alert-box {
+  background: rgba(245,166,35,0.05); border: 1px solid rgba(245,166,35,0.3); border-radius: var(--radius-sm);
+  padding: 2rem; font-size: 1rem; color: rgba(245,166,35,0.9); line-height: 1.7; margin-top: 3rem;
+}
+
+/* ═══════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════ */
+footer { text-align: center; padding: 4rem 2rem; border-top: 1px solid var(--glass-border); margin-top: 4rem; }
+.footer-stack { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 3rem; }
+.stack-pill {
+  padding: 0.8rem 1.5rem; border-radius: var(--radius-pill); font-size: 0.8rem; font-weight: 500; font-family: 'JetBrains Mono', monospace;
+  border: 1px solid var(--glass-border); color: var(--text-secondary); background: rgba(255,255,255,0.02); transition: all 0.4s var(--ease-fluid);
+}
+.stack-pill:hover { border-color: rgba(224, 120, 40, 0.5); color: var(--text-primary); background: var(--accent-alpha); }
+
+/* ═══════════════════════════════════════════════
+   CINEMATIC SCROLL REVEAL ANIMATIONS
+═══════════════════════════════════════════════ */
+.reveal { 
+  opacity: 0; filter: blur(12px); transform: translateY(60px) scale(0.94); 
+  transition: opacity 1.4s var(--ease-fluid), filter 1.4s var(--ease-fluid), transform 1.4s var(--ease-fluid); 
+  will-change: transform, opacity, filter;
+}
+.reveal.active { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
+.delay-1 { transition-delay: 0.1s; }
+.delay-2 { transition-delay: 0.2s; }
 </style>
 </head>
 <body>
 
+<!-- Parallax Ambience -->
+<div class="ambient-container">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
 
 <!-- HERO -->
-<header class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-grid"></div>
-  <div class="hero-content">
-    <div class="hero-eyebrow">v2.0 Pro Release &nbsp;·&nbsp; Universal Portal API</div>
-    <h1 class="hero-title">
-      <span class="line1">Saveetha</span>
-      <span class="line2">Attendance Bot</span>
+<header class="hero section">
+  <div class="container hero-content">
+    <span class="tag reveal delay-1" style="margin-bottom: 2rem;">v2.0 Pro Release · Universal API</span>
+    <h1 class="hero-title serif reveal delay-1">
+      <span style="display:block; color:var(--text-primary);">Saveetha</span>
+      <span class="grad-text" style="display:block;">Attendance Bot</span>
     </h1>
-    <p class="hero-sub">An intelligent student assistant powered by JSON memory mapping. Tracks every subject independently and delivers a precise daily report directly to Telegram.</p>
-    <div class="hero-cta">
-      <a href="#setup" class="btn-primary">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    <p class="hero-subtitle reveal delay-2">An intelligent student assistant powered by JSON memory mapping. Tracks every subject independently and delivers a precise daily report directly to Telegram.</p>
+    <div class="hero-actions reveal delay-2">
+      <a href="#setup" class="btn btn-primary magnetic" data-strength="40">
         Setup Guide
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
       </a>
-      <a href="https://github.com/myselfsundaresan/attendancereporter" target="_blank" class="btn-ghost">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-        View Source
-      </a>
+      <a href="https://github.com/myselfsundaresan/attendancereporter" target="_blank" class="btn btn-glass magnetic" data-strength="30">View Source</a>
     </div>
   </div>
 </header>
 
 <!-- TICKER -->
 <div class="ticker-wrap">
-  <div class="ticker-track" id="ticker">
+  <div class="ticker-track">
     <span class="ticker-item"><span class="dot"></span> Python + Selenium <span class="dot"></span> GitHub Actions <span class="dot"></span> Telegram Bot API <span class="dot"></span> Cloudflare Workers <span class="dot"></span> JSON Engine <span class="dot"></span> SMC · SDC · SSE · SCPT <span class="dot"></span> Cron Automation <span class="dot"></span> Baseline Calibration</span>
     <span class="ticker-item"><span class="dot"></span> Python + Selenium <span class="dot"></span> GitHub Actions <span class="dot"></span> Telegram Bot API <span class="dot"></span> Cloudflare Workers <span class="dot"></span> JSON Engine <span class="dot"></span> SMC · SDC · SSE · SCPT <span class="dot"></span> Cron Automation <span class="dot"></span> Baseline Calibration</span>
   </div>
 </div>
 
 <!-- FEATURES -->
-<section class="features-section">
+<section class="section">
   <div class="container">
     <div class="features-header reveal">
       <div>
-        <div class="section-label">01 — Capabilities</div>
-        <h2 class="section-title">Built for precision,<br>not just attendance.</h2>
+        <div class="eyebrow">01 — Capabilities</div>
+        <h2 class="section-title serif">Built for precision,<br>not just attendance.</h2>
       </div>
       <p class="features-desc">Four core systems working in concert to give you the most accurate, clutter-free attendance intelligence possible.</p>
     </div>
 
-    <div class="features-grid reveal">
-      <div class="feature-cell">
-        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13 12H3"/>
-        </svg>
-        <div class="feature-name">Universal Auto-Login</div>
-        <div class="feature-desc">Seamlessly supports SMC, SDC, SSE, and SCPT portals. No configuration needed — the bot detects your institution automatically.</div>
+    <div class="bento-grid">
+      <div class="ultra-glass bento-card reveal card-3d">
+        <div class="bento-icon">
+          <span class="material-symbols-outlined">login</span>
+        </div>
+        <h3>Universal Auto-Login</h3>
+        <p>Seamlessly supports SMC, SDC, SSE, and SCPT portals. No configuration needed — the bot detects your institution automatically.</p>
       </div>
 
-      <div class="feature-cell">
-        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
-        </svg>
-        <div class="feature-name">Multi-Subject JSON Engine</div>
-        <div class="feature-desc">Dynamically maps and tracks every enrolled subject individually. Built on a live memory structure — no hardcoded subject lists.</div>
+      <div class="ultra-glass bento-card reveal delay-1 card-3d">
+        <div class="bento-icon">
+          <span class="material-symbols-outlined">memory</span>
+        </div>
+        <h3>Multi-Subject JSON Engine</h3>
+        <p>Dynamically maps and tracks every enrolled subject individually. Built on a live memory structure — no hardcoded subject lists.</p>
       </div>
 
-      <div class="feature-cell">
-        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-        </svg>
-        <div class="feature-name">Zero-Point Calibration</div>
-        <div class="feature-desc">Uses a morning baseline snapshot instead of raw cumulative portal totals. Calculates exactly what happened <em>today</em>, nothing more.</div>
+      <div class="ultra-glass bento-card reveal card-3d">
+        <div class="bento-icon">
+          <span class="material-symbols-outlined">timeline</span>
+        </div>
+        <h3>Zero-Point Calibration</h3>
+        <p>Uses a morning baseline snapshot instead of raw cumulative portal totals. Calculates exactly what happened <em>today</em>, nothing more.</p>
       </div>
 
-      <div class="feature-cell">
-        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-        </svg>
-        <div class="feature-name">Clean Chat Protocol</div>
-        <div class="feature-desc">Deletes the previous message before sending the updated one. Your Telegram stays minimal — one living card, not a flood of updates.</div>
+      <div class="ultra-glass bento-card reveal delay-1 card-3d">
+        <div class="bento-icon">
+          <span class="material-symbols-outlined">cleaning_services</span>
+        </div>
+        <h3>Clean Chat Protocol</h3>
+        <p>Deletes the previous message before sending the updated one. Your Telegram stays minimal — one living card, not a flood of updates.</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- LOGIC -->
-<section class="logic-section">
-  <div class="container">
-    <div class="logic-inner">
-      <div class="reveal">
-        <div class="section-label">02 — Intelligence</div>
-        <h2 class="section-title">Baseline Comparison Logic</h2>
-        <p style="color:var(--dim);font-size:0.9rem;margin-bottom:3rem;line-height:1.7">Unlike naive scrapers that dump raw totals, this bot calculates the <em>delta</em> — giving you subject-by-subject accountability for the day.</p>
-        <div class="logic-steps">
-          <div class="logic-step">
-            <div class="step-num">01</div>
-            <div class="step-body">
-              <div class="step-title">Morning Calibration — 09:00 AM</div>
-              <div class="step-desc">The bot scans your portal, extracts all enrolled subjects, and saves the current attended/held counts per subject as the day's baseline in <code>last_attendance.txt</code>.</div>
-            </div>
+<section class="section" style="background: rgba(0,0,0,0.2); border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border);">
+  <div class="container logic-inner">
+    <div class="reveal">
+      <div class="eyebrow">02 — Intelligence</div>
+      <h2 class="section-title serif">Baseline Comparison Logic</h2>
+      <p style="color:var(--text-secondary); font-size:1.1rem; margin-bottom:3rem; line-height:1.7;">Unlike naive scrapers that dump raw totals, this bot calculates the <em>delta</em> — giving you subject-by-subject accountability for the day.</p>
+      
+      <div class="logic-steps">
+        <div class="logic-step">
+          <div class="step-num">01</div>
+          <div>
+            <div class="step-title">Morning Calibration — 09:00 AM</div>
+            <div class="step-desc">The bot scans your portal, extracts all enrolled subjects, and saves the current attended/held counts per subject as the day's baseline in <code>last_attendance.txt</code>.</div>
           </div>
-          <div class="logic-step">
-            <div class="step-num">02</div>
-            <div class="step-body">
-              <div class="step-title">Delta Calculation</div>
-              <div class="step-desc">Every subsequent run computes <code>Current − Baseline</code> for each subject. This isolates today's classes from your semester history.</div>
-            </div>
+        </div>
+        <div class="logic-step">
+          <div class="step-num">02</div>
+          <div>
+            <div class="step-title">Delta Calculation</div>
+            <div class="step-desc">Every subsequent run computes <code>Current − Baseline</code> for each subject. This isolates today's classes from your semester history.</div>
           </div>
-          <div class="logic-step">
-            <div class="step-num">03</div>
-            <div class="step-body">
-              <div class="step-title">Itemized Telegram Report</div>
-              <div class="step-desc">Only subjects with new activity are listed. Your true combined percentage is computed from total semester data and appended beneath.</div>
-            </div>
+        </div>
+        <div class="logic-step">
+          <div class="step-num">03</div>
+          <div>
+            <div class="step-title">Itemized Telegram Report</div>
+            <div class="step-desc">Only subjects with new activity are listed. Your true combined percentage is computed from total semester data and appended beneath.</div>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="reveal" style="transition-delay:0.15s">
-        <div class="tg-phone">
-          <div class="tg-topbar">
-            <div class="tg-avatar">AB</div>
-            <div>
-              <div class="tg-name">Attendance Bot Pro</div>
-              <div class="tg-status">online</div>
-            </div>
+    <div class="reveal delay-1">
+      <div class="ultra-glass tg-phone card-3d">
+        <div class="tg-topbar">
+          <div class="tg-avatar">AB</div>
+          <div>
+            <div class="tg-name">Attendance Bot Pro</div>
+            <div class="tg-status">online</div>
           </div>
-          <div class="tg-body">
-            <div class="tg-msg" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:0.83rem;line-height:1.75;white-space:pre-wrap;word-break:break-word;">📅 <b>Daily Attendance Tracker</b> (11-03-2026)
-⏰ Last Checked: 02:00 PM
-<span style="color:#3a5068">━━━━━━━━━━━━━━━━━━━━━</span>
-📝 <b>Today's Updates</b>
-🔹 <b>Epidemiology, Biostati..</b> (MSC011)
-      Held: 2 | Present: 2
-<span style="color:#3a5068">━━━━━━━━━━━━━━━━━━━━━</span>
-📊 <b>Subject-Wise Stats</b>
-🔹 Epidemiology, Biostati..: 14/14 <span style="color:#4cd964;font-weight:600">(100.0%)</span>
-🔹 Recent Advances in Mol..: 4/4 <span style="color:#4cd964;font-weight:600">(100.0%)</span>
-🔹 Library Hour: 17/19 <span style="color:#f0a500;font-weight:600">(89.47%)</span>
-<span style="color:#3a5068">━━━━━━━━━━━━━━━━━━━━━</span>
-              <span class="msg-time">14:00 ✓✓</span>
-            </div>
+        </div>
+        <div class="tg-body">
+          <div class="tg-msg">
+            📅 <b>Daily Attendance Tracker</b> (11-03-2026)<br>
+            ⏰ Last Checked: 02:00 PM<br>
+            <span style="color:#3a5068">━━━━━━━━━━━━━━━━━━━━━</span><br>
+            📝 <b>Today's Updates</b><br>
+            🔹 <b>Epidemiology, Biostati..</b> (MSC011)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Held: 2 | Present: 2<br>
+            <span style="color:#3a5068">━━━━━━━━━━━━━━━━━━━━━</span><br>
+            📊 <b>Subject-Wise Stats</b><br>
+            🔹 Epidemiology, Biostati..: 14/14 <span style="color:#4cd964;font-weight:600">(100.0%)</span><br>
+            🔹 Recent Advances in Mol..: 4/4 <span style="color:#4cd964;font-weight:600">(100.0%)</span><br>
+            🔹 Library Hour: 17/19 <span style="color:#f0a500;font-weight:600">(89.47%)</span><br>
+            <span style="color:#3a5068">━━━━━━━━━━━━━━━━━━━━━</span>
+            <span class="msg-time">14:00 ✓✓</span>
           </div>
-          <div class="tg-btn-row">
-            <div class="tg-btn">🔄 Refresh Now</div>
-          </div>
+        </div>
+        <div class="tg-btn-row">
+          <div class="tg-btn">🔄 Refresh Now</div>
         </div>
       </div>
     </div>
@@ -947,15 +515,16 @@
 </section>
 
 <!-- SETUP -->
-<section id="setup" class="setup-section">
+<section id="setup" class="section">
   <div class="container">
-    <div class="reveal" style="margin-bottom:4rem">
-      <div class="section-label">03 — Configuration</div>
-      <h2 class="section-title">Setup Guide</h2>
-    </div>
-
     <div class="setup-inner">
+      
       <div class="setup-nav reveal">
+        <div style="margin-bottom: 2.5rem;">
+          <div class="eyebrow">03 — Configuration</div>
+          <h2 class="section-title serif" style="margin-bottom: 0;">Setup Guide</h2>
+        </div>
+        
         <div class="nav-guide">Navigate to <strong>Settings → Secrets and variables → Actions</strong> in your GitHub repo to add all credentials.</div>
         <a href="#step1" class="nav-item active"><span class="nav-num">01</span> Fork Repository</a>
         <a href="#step2" class="nav-item"><span class="nav-num">02</span> Create Telegram Bot</a>
@@ -964,17 +533,17 @@
       </div>
 
       <div class="setup-steps">
-        <div class="setup-step reveal" id="step1">
+        <div class="reveal" id="step1">
           <div class="step-header">
             <div class="step-badge">1</div>
             <div class="step-title-h">Fork the Repository</div>
           </div>
           <div class="step-content">
-            <p>Click <strong style="color:var(--text)">Fork</strong> at the top-right of the GitHub repository page. This creates your personal copy where all secrets and workflows will live.</p>
+            <p>Click <strong style="color:var(--text-primary)">Fork</strong> at the top-right of the GitHub repository page. This creates your personal copy where all secrets and workflows will live.</p>
           </div>
         </div>
 
-        <div class="setup-step reveal" id="step2">
+        <div class="reveal" id="step2">
           <div class="step-header">
             <div class="step-badge">2</div>
             <div class="step-title-h">Create Your Telegram Bot</div>
@@ -982,82 +551,73 @@
           <div class="step-content">
             <p>You need a Telegram Bot Token (<code>BOT_TOKEN</code>) and your personal Chat ID (<code>CHAT_ID</code>) before filling in GitHub Secrets. Follow these steps carefully.</p>
 
-            <div style="margin-top:1.5rem">
-              <div style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--fire);margin-bottom:1rem">Part A — Get Your BOT_TOKEN from @BotFather</div>
-              <div style="display:flex;flex-direction:column;gap:0.9rem">
-
-                <div style="display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.2rem;background:var(--bg1);border:1px solid var(--line);border-radius:8px">
-                  <div style="min-width:1.6rem;height:1.6rem;background:var(--fire);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0">1</div>
-                  <div>
-                    <div style="font-weight:600;font-size:0.9rem;margin-bottom:0.25rem">Open Telegram and search for BotFather</div>
-                    <div style="font-size:0.82rem;color:var(--dim)">Search <code>@BotFather</code> in the Telegram search bar. It's the <strong style="color:var(--text)">official verified bot</strong> with a blue checkmark ✓. Tap on it and press <strong style="color:var(--text)">Start</strong>.</div>
-                  </div>
+            <div style="margin-top:2.5rem; margin-bottom: 3rem;">
+              <div class="eyebrow" style="margin-bottom:1.5rem">Part A — Get Your BOT_TOKEN</div>
+              
+              <div class="micro-card">
+                <div class="micro-num">1</div>
+                <div>
+                  <div class="micro-title">Open Telegram and search for BotFather</div>
+                  <div style="font-size:0.9rem;color:var(--text-secondary)">Search <code>@BotFather</code> in the Telegram search bar. It's the <strong style="color:var(--text-primary)">official verified bot</strong> with a blue checkmark ✓. Tap on it and press Start.</div>
                 </div>
+              </div>
 
-                <div style="display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.2rem;background:var(--bg1);border:1px solid var(--line);border-radius:8px">
-                  <div style="min-width:1.6rem;height:1.6rem;background:var(--fire);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0">2</div>
-                  <div>
-                    <div style="font-weight:600;font-size:0.9rem;margin-bottom:0.25rem">Send the /newbot command</div>
-                    <div style="font-size:0.82rem;color:var(--dim)">Type and send <code>/newbot</code>. BotFather will ask you to choose a <strong style="color:var(--text)">display name</strong> for your bot — this is what users see (e.g. <em>My Attendance Bot</em>).</div>
-                  </div>
+              <div class="micro-card">
+                <div class="micro-num">2</div>
+                <div>
+                  <div class="micro-title">Send the /newbot command</div>
+                  <div style="font-size:0.9rem;color:var(--text-secondary)">Type and send <code>/newbot</code>. BotFather will ask you to choose a display name for your bot.</div>
                 </div>
+              </div>
 
-                <div style="display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.2rem;background:var(--bg1);border:1px solid var(--line);border-radius:8px">
-                  <div style="min-width:1.6rem;height:1.6rem;background:var(--fire);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0">3</div>
-                  <div>
-                    <div style="font-weight:600;font-size:0.9rem;margin-bottom:0.25rem">Choose a username</div>
-                    <div style="font-size:0.82rem;color:var(--dim)">BotFather will then ask for a <strong style="color:var(--text)">username</strong>. It must be unique and end with <code>bot</code> (e.g. <em>my_attendance_bot</em> or <em>SaveethaTrackerBot</em>).</div>
-                  </div>
+              <div class="micro-card">
+                <div class="micro-num">3</div>
+                <div>
+                  <div class="micro-title">Choose a username</div>
+                  <div style="font-size:0.9rem;color:var(--text-secondary)">It must be unique and end with <code>bot</code> (e.g. <em>my_attendance_bot</em>).</div>
                 </div>
+              </div>
 
-                <div style="display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.2rem;background:rgba(255,69,0,0.04);border:1px solid rgba(255,69,0,0.25);border-radius:8px">
-                  <div style="min-width:1.6rem;height:1.6rem;background:var(--fire);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0">4</div>
-                  <div>
-                    <div style="font-weight:600;font-size:0.9rem;margin-bottom:0.25rem">Copy your Bot Token</div>
-                    <div style="font-size:0.82rem;color:var(--dim)">BotFather will reply with a message containing your token. It looks like:<br><br>
-                    <code style="display:block;margin-top:0.4rem;font-size:0.78rem;line-height:1.6">7123456789:AAFxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code><br>
-                    Copy this entire string. This is your <code>BOT_TOKEN</code>. <strong style="color:var(--fire)">Never share it publicly.</strong></div>
-                  </div>
+              <div class="micro-card" style="border-color:rgba(224, 120, 40, 0.4); background:var(--accent-alpha);">
+                <div class="micro-num">4</div>
+                <div>
+                  <div class="micro-title">Copy your Bot Token</div>
+                  <div style="font-size:0.9rem;color:var(--text-secondary)">BotFather will reply with a message containing your token. Copy this entire string. This is your <code>BOT_TOKEN</code>. <strong style="color:var(--accent)">Never share it publicly.</strong></div>
                 </div>
+              </div>
 
-                <div style="display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.2rem;background:var(--bg1);border:1px solid var(--line);border-radius:8px">
-                  <div style="min-width:1.6rem;height:1.6rem;background:var(--fire);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0">5</div>
-                  <div>
-                    <div style="font-weight:600;font-size:0.9rem;margin-bottom:0.25rem">Start a chat with your new bot</div>
-                    <div style="font-size:0.82rem;color:var(--dim)">Search your bot's username in Telegram and press <strong style="color:var(--text)">Start</strong>. This is required — the bot cannot send you messages until you initiate a conversation.</div>
-                  </div>
+              <div class="micro-card">
+                <div class="micro-num">5</div>
+                <div>
+                  <div class="micro-title">Start a chat with your new bot</div>
+                  <div style="font-size:0.9rem;color:var(--text-secondary)">Search your bot's username in Telegram and press <strong style="color:var(--text-primary)">Start</strong>. The bot cannot send you messages until you initiate a conversation.</div>
                 </div>
-
               </div>
             </div>
 
-            <div style="margin-top:2rem">
-              <div style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--fire);margin-bottom:1rem">Part B — Get Your CHAT_ID from @userinfobot</div>
-              <div style="display:flex;flex-direction:column;gap:0.9rem">
-
-                <div style="display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.2rem;background:var(--bg1);border:1px solid var(--line);border-radius:8px">
-                  <div style="min-width:1.6rem;height:1.6rem;background:#22c55e;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0">1</div>
-                  <div>
-                    <div style="font-weight:600;font-size:0.9rem;margin-bottom:0.25rem">Search for @userinfobot</div>
-                    <div style="font-size:0.82rem;color:var(--dim)">In Telegram, search <code>@userinfobot</code> and press <strong style="color:var(--text)">Start</strong>.</div>
-                  </div>
+            <div>
+              <div class="eyebrow" style="margin-bottom:1.5rem">Part B — Get Your CHAT_ID</div>
+              
+              <div class="micro-card">
+                <div class="micro-num green">1</div>
+                <div>
+                  <div class="micro-title">Search for @userinfobot</div>
+                  <div style="font-size:0.9rem;color:var(--text-secondary)">In Telegram, search <code>@userinfobot</code> and press Start.</div>
                 </div>
+              </div>
 
-                <div style="display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.2rem;background:rgba(34,197,94,0.04);border:1px solid rgba(34,197,94,0.2);border-radius:8px">
-                  <div style="min-width:1.6rem;height:1.6rem;background:#22c55e;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0">2</div>
-                  <div>
-                    <div style="font-weight:600;font-size:0.9rem;margin-bottom:0.25rem">Copy your ID</div>
-                    <div style="font-size:0.82rem;color:var(--dim)">The bot will instantly reply with your details. Copy the number next to <strong style="color:var(--text)">Id:</strong> — that is your <code>CHAT_ID</code>.<br><br>
-                    <code style="display:block;margin-top:0.4rem;font-size:0.78rem;line-height:1.8">Id: 987654321<br>First: Your Name<br>Username: @yourhandle</code></div>
-                  </div>
+              <div class="micro-card" style="border-color:rgba(34, 197, 94, 0.4); background:rgba(34, 197, 94, 0.05);">
+                <div class="micro-num green">2</div>
+                <div>
+                  <div class="micro-title">Copy your ID</div>
+                  <div style="font-size:0.9rem;color:var(--text-secondary)">The bot will instantly reply with your details. Copy the number next to <strong style="color:var(--text-primary)">Id:</strong> — that is your <code>CHAT_ID</code>.</div>
                 </div>
-
               </div>
             </div>
           </div>
         </div>
 
-        <div class="setup-step reveal" id="step3">
+        <div class="reveal" id="step3">
           <div class="step-header">
             <div class="step-badge">3</div>
             <div class="step-title-h">Configure GitHub Secrets</div>
@@ -1069,9 +629,9 @@
               <tbody>
                 <tr><td><code>USER_ID</code></td><td>Your portal username / roll number</td></tr>
                 <tr><td><code>PASSWORD</code></td><td>Your portal password</td></tr>
-                <tr><td><code>BASE_URL</code></td><td><span class="badge-opt">Optional</span> Portal URL (e.g. <code>https://arms.sse.saveetha.com</code>). Defaults to SMC if blank.</td></tr>
-                <tr><td><code>BOT_TOKEN</code></td><td>Token copied from <strong>@BotFather</strong> (Step 2A above)</td></tr>
-                <tr><td><code>CHAT_ID</code></td><td>Your ID copied from <strong>@userinfobot</strong> (Step 2B above)</td></tr>
+                <tr><td><code>BASE_URL</code></td><td>Portal URL (e.g. <code>https://arms.sse.saveetha.com</code>). Defaults to SMC if blank.</td></tr>
+                <tr><td><code>BOT_TOKEN</code></td><td>Token copied from @BotFather</td></tr>
+                <tr><td><code>CHAT_ID</code></td><td>Your ID copied from @userinfobot</td></tr>
                 <tr><td><code>GH_PAT</code></td><td>GitHub Personal Access Token (Classic) with <strong>workflow</strong> scope</td></tr>
                 <tr><td><code>REPO_FULL_NAME</code></td><td>Your repository path — e.g. <code>username/attendancereporter</code></td></tr>
               </tbody>
@@ -1079,7 +639,7 @@
           </div>
         </div>
 
-        <div class="setup-step reveal" id="step4">
+        <div class="reveal" id="step4">
           <div class="step-header">
             <div class="step-badge green">4</div>
             <div class="step-title-h">Initialize JSON Memory</div>
@@ -1087,7 +647,7 @@
           <div class="step-content">
             <p>Edit <code>last_attendance.txt</code>, clear all contents, and set it to exactly this empty JSON object:</p>
             <pre><code>{}</code></pre>
-            <p>On its first run, the bot auto-discovers all your subjects from the portal and builds a full memory map. The <code>{}</code> is simply the starting point.</p>
+            <p>On its first run, the bot auto-discovers all your subjects from the portal and builds a full memory map. The empty JSON is simply the starting point.</p>
           </div>
         </div>
       </div>
@@ -1096,47 +656,45 @@
 </section>
 
 <!-- CLOUDFLARE -->
-<section class="cf-section">
-  <div class="container">
-    <div class="cf-inner">
-      <div class="reveal">
-        <div class="section-label">04 — Optional</div>
-        <h2 class="section-title">Refresh Now<br>Button Setup</h2>
-        <p style="color:var(--dim);font-size:0.9rem;line-height:1.7;margin-top:1rem">GitHub Actions can't natively listen to Telegram callbacks. A Cloudflare Worker acts as the bridge — receiving the button tap and triggering the GitHub workflow via API.</p>
-        <div class="alert-box">
-          <strong>Skipping this phase?</strong> The bot will still run automatically 3 times daily. Just avoid tapping "Refresh Now" in Telegram — without the listener, the request won't be processed.
+<section class="section cf-section">
+  <div class="container cf-inner">
+    <div class="reveal">
+      <div class="eyebrow">04 — Optional Upgrade</div>
+      <h2 class="section-title serif">Refresh Now<br>Button Setup</h2>
+      <p style="color:var(--text-secondary); font-size:1.1rem; line-height:1.7; margin-top:1.5rem">GitHub Actions can't natively listen to Telegram callbacks. A Cloudflare Worker acts as the bridge — receiving the button tap and triggering the GitHub workflow via API.</p>
+      <div class="alert-box ultra-glass">
+        <strong style="color:var(--accent-light);">Skipping this phase?</strong><br><br>The bot will still run automatically 3 times daily. Just avoid tapping "Refresh Now" in Telegram — without the listener, the request won't be processed.
+      </div>
+    </div>
+
+    <div class="cf-steps reveal delay-1">
+      <div class="ultra-glass cf-step card-3d">
+        <div class="cf-dot">01</div>
+        <div>
+          <div class="step-title" style="margin-bottom:0.2rem">Create & Deploy Worker</div>
+          <div class="step-desc">Log in to Cloudflare → Workers & Pages → Create application → Create Worker → Deploy → Edit Code.</div>
         </div>
       </div>
-
-      <div class="cf-steps reveal" style="transition-delay:0.15s">
-        <div class="cf-step">
-          <div class="cf-dot">01</div>
-          <div>
-            <div class="cf-step-title">Create & Deploy Worker</div>
-            <div class="cf-step-desc">Log in to Cloudflare → Workers & Pages → Create application → Create Worker → Deploy → Edit Code.</div>
-          </div>
+      <div class="ultra-glass cf-step card-3d">
+        <div class="cf-dot">02</div>
+        <div>
+          <div class="step-title" style="margin-bottom:0.2rem">Paste Webhook Script</div>
+          <div class="step-desc">Replace all content in <code>worker.js</code> with the provided webhook script from the repository.</div>
         </div>
-        <div class="cf-step">
-          <div class="cf-dot">02</div>
-          <div>
-            <div class="cf-step-title">Paste Webhook Script</div>
-            <div class="cf-step-desc">Replace all content in <code>worker.js</code> with the provided webhook script from the repository.</div>
-          </div>
+      </div>
+      <div class="ultra-glass cf-step card-3d">
+        <div class="cf-dot">03</div>
+        <div>
+          <div class="step-title" style="margin-bottom:0.2rem">Add Environment Variables</div>
+          <div class="step-desc">Under <code>Settings → Variables</code>, add: <code>BOT_TOKEN</code>, <code>GH_PAT</code>, and <code>REPO_FULL_NAME</code>.</div>
         </div>
-        <div class="cf-step">
-          <div class="cf-dot">03</div>
-          <div>
-            <div class="cf-step-title">Add Environment Variables</div>
-            <div class="cf-step-desc">Under <code>Settings → Variables → Environment Variables</code>, add: <code>BOT_TOKEN</code>, <code>GH_PAT</code>, and <code>REPO_FULL_NAME</code>.</div>
-          </div>
-        </div>
-        <div class="cf-step">
-          <div class="cf-dot">04</div>
-          <div>
-            <div class="cf-step-title">Activate Telegram Webhook</div>
-            <div class="cf-step-desc">Copy your Worker URL and open this in a browser to connect Telegram to the listener:<br><br>
-            <code style="display:block;overflow-x:auto;font-size:0.72rem;line-height:1.5">https://api.telegram.org/bot&lt;TOKEN&gt;/setWebhook?url=&lt;WORKER_URL&gt;</code>
-            </div>
+      </div>
+      <div class="ultra-glass cf-step card-3d">
+        <div class="cf-dot">04</div>
+        <div>
+          <div class="step-title" style="margin-bottom:0.2rem">Activate Webhook</div>
+          <div class="step-desc">Copy your Worker URL and open this in a browser to connect Telegram to the listener:<br><br>
+          <code style="display:block;overflow-x:auto;font-size:0.75rem;line-height:1.6">https://api.telegram.org/bot&lt;TOKEN&gt;/<br>setWebhook?url=&lt;WORKER_URL&gt;</code>
           </div>
         </div>
       </div>
@@ -1144,46 +702,47 @@
   </div>
 </section>
 
-<!-- SCHEDULE + FAQ -->
-<section class="schedule-section">
+<!-- SCHEDULE & FAQ -->
+<section class="section">
   <div class="container">
-    <div class="reveal">
-      <div class="section-label">05 — Reference</div>
-      <h2 class="section-title">Schedule & FAQ</h2>
+    <div class="reveal" style="text-align:center; margin-bottom:5rem;">
+      <div class="eyebrow" style="justify-content:center; margin-bottom:1rem;">05 — Reference</div>
+      <h2 class="section-title serif">Schedule & FAQ</h2>
     </div>
-    <div class="two-col">
+    
+    <div class="logic-inner" style="align-items:start;">
       <div class="reveal">
-        <p style="color:var(--dim);font-size:0.85rem;margin-bottom:1.5rem;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;text-transform:uppercase;font-size:0.65rem">Automated runs via GitHub Actions cron</p>
-        <div class="schedule-list">
-          <div class="schedule-item">
-            <div class="schedule-time">09:00 AM IST</div>
-            <div class="schedule-label">Morning baseline calibration</div>
+        <p class="eyebrow" style="margin-bottom:2rem;">Automated runs via GitHub Actions cron</p>
+        <div class="logic-steps">
+          <div class="ultra-glass" style="padding: 1.5rem 2rem; border-radius: var(--radius-sm); margin-bottom:1rem; display:flex; justify-content:space-between; align-items:center;">
+            <span class="step-title" style="margin:0; font-family:'JetBrains Mono', monospace; font-size:0.9rem; color:var(--accent);">09:00 AM IST</span>
+            <span class="step-desc">Morning baseline calibration</span>
           </div>
-          <div class="schedule-item">
-            <div class="schedule-time">11:00 AM IST</div>
-            <div class="schedule-label">Mid-morning update</div>
+          <div class="ultra-glass" style="padding: 1.5rem 2rem; border-radius: var(--radius-sm); margin-bottom:1rem; display:flex; justify-content:space-between; align-items:center;">
+            <span class="step-title" style="margin:0; font-family:'JetBrains Mono', monospace; font-size:0.9rem; color:var(--accent);">11:00 AM IST</span>
+            <span class="step-desc">Mid-morning update</span>
           </div>
-          <div class="schedule-item">
-            <div class="schedule-time">02:00 PM IST</div>
-            <div class="schedule-label">Afternoon summary</div>
+          <div class="ultra-glass" style="padding: 1.5rem 2rem; border-radius: var(--radius-sm); margin-bottom:1rem; display:flex; justify-content:space-between; align-items:center;">
+            <span class="step-title" style="margin:0; font-family:'JetBrains Mono', monospace; font-size:0.9rem; color:var(--accent);">02:00 PM IST</span>
+            <span class="step-desc">Afternoon summary</span>
           </div>
         </div>
       </div>
 
-      <div class="reveal" style="transition-delay:0.1s">
-        <p style="color:var(--dim);font-size:0.85rem;margin-bottom:1.5rem;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;text-transform:uppercase;font-size:0.65rem">Common questions</p>
-        <div class="faq-list">
-          <div class="faq-item">
-            <div class="faq-q">Is my password safe?</div>
-            <div class="faq-a">Yes. Credentials are encrypted inside GitHub Secrets and never appear in any logs or console output.</div>
+      <div class="reveal delay-1">
+        <p class="eyebrow" style="margin-bottom:2rem;">Common Questions</p>
+        <div class="logic-steps">
+          <div style="padding-bottom:1.5rem; margin-bottom:1.5rem; border-bottom:1px solid var(--glass-border);">
+            <div class="step-title">Is my password safe?</div>
+            <div class="step-desc">Yes. Credentials are encrypted inside GitHub Secrets and never appear in any logs or console output.</div>
           </div>
-          <div class="faq-item">
-            <div class="faq-q">What happens on a holiday?</div>
-            <div class="faq-a">The bot detects zero new classes for all subjects and updates the message to say "No classes updated yet today."</div>
+          <div style="padding-bottom:1.5rem; margin-bottom:1.5rem; border-bottom:1px solid var(--glass-border);">
+            <div class="step-title">What happens on a holiday?</div>
+            <div class="step-desc">The bot detects zero new classes for all subjects and updates the message to say "No classes updated yet today."</div>
           </div>
-          <div class="faq-item">
-            <div class="faq-q">Can I trigger it manually?</div>
-            <div class="faq-a">Yes. Go to the Actions tab in your GitHub repository, select the workflow, and click Run workflow.</div>
+          <div style="padding-bottom:0;">
+            <div class="step-title">Can I trigger it manually?</div>
+            <div class="step-desc">Yes. Go to the Actions tab in your GitHub repository, select the workflow, and click Run workflow.</div>
           </div>
         </div>
       </div>
@@ -1193,36 +752,40 @@
 
 <!-- FOOTER -->
 <footer>
-  <div class="container">
-    <div class="footer-stack reveal">
+  <div class="container reveal">
+    <div class="footer-stack">
       <span class="stack-pill">Python / Selenium</span>
       <span class="stack-pill">GitHub Actions</span>
       <span class="stack-pill">Telegram API</span>
       <span class="stack-pill">Cloudflare Workers</span>
       <span class="stack-pill">JSON Engine</span>
     </div>
-    <div class="footer-copy reveal">© 2026 &nbsp;·&nbsp; Sundaresan Nithiyanandam &nbsp;·&nbsp; Built for educational purposes</div>
+    <div style="font-size: 0.9rem; color: var(--text-muted); letter-spacing: 0.05em;">
+      © <span id="year"></span> Sundaresan Nithiyanandam. Built for educational purposes.
+    </div>
   </div>
 </footer>
 
 <script>
+  // Year
+  document.getElementById('year').textContent = new Date().getFullYear();
 
-
-  // Scroll reveal
-  const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach((entry, i) => {
+  // Cinematic Scroll Reveal (Intersection Observer)
+  const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
+  const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
+        entry.target.classList.add('active');
         observer.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.1 });
-  reveals.forEach(el => observer.observe(el));
+  }, observerOptions);
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-  // Active nav
-  const steps = ['step1','step2','step3','step4'];
+  // Active Setup Nav Tracking
+  const steps = ['step1', 'step2', 'step3', 'step4'];
   const navItems = document.querySelectorAll('.nav-item');
+  
   window.addEventListener('scroll', () => {
     steps.forEach((id, i) => {
       const el = document.getElementById(id);
@@ -1234,6 +797,62 @@
       }
     });
   });
+
+  // 3D Tilt Engine for Cards
+  document.querySelectorAll('.card-3d').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      card.style.setProperty('--mx', `${x}px`);
+      card.style.setProperty('--my', `${y}px`);
+      
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = ((y - centerY) / centerY) * -4; 
+      const rotateY = ((x - centerX) / centerX) * 4;
+      
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+    });
+
+    card.addEventListener('mouseleave', () => {
+      card.style.transition = 'transform 0.6s cubic-bezier(0.2, 0, 0, 1)';
+      card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+      setTimeout(() => { card.style.transition = ''; }, 600);
+    });
+    
+    card.addEventListener('mouseenter', () => {
+      card.style.transition = 'none';
+    });
+  });
+
+  // Magnetic Button Physics
+  const magneticEls = document.querySelectorAll('.magnetic');
+  magneticEls.forEach(el => {
+    el.addEventListener('mousemove', (e) => {
+      const rect = el.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+      const strength = el.getAttribute('data-strength') || 20;
+      
+      const boundX = x / strength * 1.5;
+      const boundY = y / strength * 1.5;
+      
+      el.style.transform = `translate3d(${boundX}px, ${boundY}px, 0)`;
+    });
+
+    el.addEventListener('mouseleave', () => {
+      el.style.transition = 'transform 0.5s cubic-bezier(0.25, 1.2, 0.3, 1)';
+      el.style.transform = 'translate3d(0px, 0px, 0)';
+      setTimeout(() => { el.style.transition = ''; }, 500);
+    });
+    
+    el.addEventListener('mouseenter', () => {
+      el.style.transition = 'none';
+    });
+  });
+
 </script>
 </body>
 </html>
