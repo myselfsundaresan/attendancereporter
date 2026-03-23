@@ -1,11 +1,11 @@
 {
-    "date": "22-03-2026",
-    "message_id": 195,
+    "date": "23-03-2026",
+    "message_id": 196,
     "subjects": {
         "MSD3A Biochem 2023": {
             "name": "MSc Biochemistry 2nd Year",
-            "total": 472,
-            "attended": 387
+            "total": 473,
+            "attended": 388
         }
     }
 }
