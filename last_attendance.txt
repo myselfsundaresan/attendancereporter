@@ -1,6 +1,6 @@
 {
-    "date": "01-06-2026",
-    "message_id": 368,
+    "date": "02-06-2026",
+    "message_id": 369,
     "subjects": {
         "MSD3A": {
             "name": "MSc Biochemistry 2nd Year",
